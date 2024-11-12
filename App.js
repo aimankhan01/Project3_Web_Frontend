@@ -5,6 +5,8 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Homepage from './assets/pages/Homepage'; 
+import Cart from './assets/pages/ShoppingCart'; 
+
 
 const Drawer = createDrawerNavigator();
 
@@ -17,6 +19,8 @@ export default function App() {
       >
         <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="Home" component={Homepage} />
+          <Drawer.Screen name="Cart" component={Cart} />
+
           {/* You can add more screens here as needed */}
         </Drawer.Navigator>
         <StatusBar style="auto" />

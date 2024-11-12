@@ -53,9 +53,10 @@ const Homepage = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.cartButton}>
-            <FontAwesome name="shopping-cart" size={20} color="#fff" />
-          </TouchableOpacity>
+          <TouchableOpacity style={styles.cartButton}
+          onPress={() => navigation.navigate('Cart')} >
+      <FontAwesome name="shopping-cart" size={20} color="#fff" />
+    </TouchableOpacity>
         </View>
 
         {/* Categories Section */}
