@@ -1,20 +1,37 @@
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import Homepage from './assets/pages/Homepage'; 
+
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <LinearGradient
+        colors={['#2fe97f', '#56ab2f']} 
+        style={styles.container}
+      >
+        <Drawer.Navigator initialRouteName="Home">
+          <Drawer.Screen name="Home" component={Homepage} />
+          {/* You can add more screens here as needed */}
+        </Drawer.Navigator>
+        <StatusBar style="auto" />
+      </LinearGradient>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
