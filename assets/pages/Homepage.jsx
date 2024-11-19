@@ -5,19 +5,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Homepage = ({ navigation }) => {
   const [search, setSearch] = useState('');
-  const [apiData, setApiData] = useState([]);
-
-  useEffect(() => {
-    // Replace with your API URL
-    fetch('http://localhost:8081/')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched data:', data);
-        setApiData(data); // Update state with fetched data
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
 
 
 
@@ -41,7 +28,9 @@ const Homepage = ({ navigation }) => {
 
   const handleCategoryPress = (category) => {
     console.log(`Clicked on ${category.name}`);
-    navigation.navigate('CategoryDetail', { categoryId: category.id, categoryName: category.name });
+    // navigation.navigate('Category', { categoryId: category.id, categoryName: category.name });
+    navigation.navigate('Catagory');
+
   };
 
   const handleStorePress = (store) => {

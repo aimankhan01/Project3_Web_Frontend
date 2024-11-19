@@ -7,12 +7,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Homepage from './assets/pages/Homepage';
 import Searchpage from './assets/pages/Searchpage';
 import Cart from './assets/pages/ShoppingCart'; 
+import CategoryPage from './assets/pages/Catagories';
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
+    
       <Drawer.Navigator 
         initialRouteName="Home" 
         screenOptions={{
@@ -24,11 +26,13 @@ export default function App() {
           <Drawer.Screen name="Home" component={Homepage} />
           <Drawer.Screen name="Search" component={Searchpage} />
             <Drawer.Screen name="Cart" component={Cart} />
+            <Drawer.Screen name="Catagory" component={CategoryPage} />
+
           {/* You can add more screens here as needed */}
         </Drawer.Navigator>
 
         <StatusBar style="auto" />
-      </LinearGradient>
+      
     </NavigationContainer>
   );
 }
