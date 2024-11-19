@@ -5,6 +5,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Homepage = ({ navigation }) => {
   const [search, setSearch] = useState('');
+  const [apiData, setApiData] = useState([]);
+
+  useEffect(() => {
+    // Replace with your API URL
+    fetch('http://localhost:8081/')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched data:', data);
+        setApiData(data); // Update state with fetched data
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+
+
 
   const categories = [
     { id: '1', name: 'Produce', image: './assets/Produce.jpg' },
