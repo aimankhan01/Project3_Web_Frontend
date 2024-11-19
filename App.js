@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Homepage from './assets/pages/Homepage';
 import Searchpage from './assets/pages/Searchpage';
+import Cart from './assets/pages/ShoppingCart'; 
 
 const Drawer = createDrawerNavigator();
 
@@ -20,13 +21,14 @@ export default function App() {
           headerShown: false, 
         }}
       >
-        <Drawer.Screen name="Home" component={Homepage} />
-        <Drawer.Screen name="Search" component={Searchpage} />
-        {/* You can add more screens here as needed */}
-      </Drawer.Navigator>
+          <Drawer.Screen name="Home" component={Homepage} />
+          <Drawer.Screen name="Search" component={Searchpage} />
+            <Drawer.Screen name="Cart" component={Cart} />
+          {/* You can add more screens here as needed */}
+        </Drawer.Navigator>
 
-      {/* LinearGradient */}
-      <StatusBar style="auto" />
+        <StatusBar style="auto" />
+      </LinearGradient>
     </NavigationContainer>
   );
 }

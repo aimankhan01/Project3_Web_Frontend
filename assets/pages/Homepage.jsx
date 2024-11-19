@@ -48,7 +48,7 @@ const Homepage = ({ navigation }) => {
           <Text style={styles.headerText}>Home</Text>
         </View>
 
-        {/* Search Bar with Cart Icon */}
+{/* Search Bar with Cart Icon */}
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
