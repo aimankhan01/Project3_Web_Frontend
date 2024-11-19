@@ -26,7 +26,12 @@ const Homepage = ({ navigation }) => {
 
   const handleCategoryPress = (category) => {
     console.log(`Clicked on ${category.name}`);
-    // Add navigation or any other logic here
+    navigation.navigate('CategoryDetail', { categoryId: category.id, categoryName: category.name });
+  };
+
+  const handleStorePress = (store) => {
+    console.log(`Clicked on ${store.name}`);
+    navigation.navigate('Search', { searchQuery: store.name });
   };
 
   return (
@@ -35,28 +40,28 @@ const Homepage = ({ navigation }) => {
       style={styles.gradientContainer}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Header Bar with Drawer, Search Bar, and Add to Cart Button */}
+        {/* Custom Header with Drawer Button */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.drawerIcon}>
-            <FontAwesome name="bars" size={24} color="#fff" />
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+            <FontAwesome name="bars" size={24} color="#000" />
           </TouchableOpacity>
+          <Text style={styles.headerText}>Home</Text>
+        </View>
 
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search for items..."
-              value={search}
-              onChangeText={setSearch}
-            />
-            <TouchableOpacity style={styles.searchIcon}>
-              <FontAwesome name="search" size={20} color="#fff" />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={styles.cartButton}
-          onPress={() => navigation.navigate('Cart')} >
-      <FontAwesome name="shopping-cart" size={20} color="#fff" />
-    </TouchableOpacity>
+{/* Search Bar with Cart Icon */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for items..."
+            value={search}
+            onChangeText={setSearch}
+          />
+          <TouchableOpacity style={styles.searchIcon}>
+            <FontAwesome name="search" size={20} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cartIcon} onPress={() => navigation.navigate('Cart')}>
+            <FontAwesome name="shopping-cart" size={24} color="#388E3C" />
+          </TouchableOpacity>
         </View>
 
         {/* Categories Section */}
@@ -98,7 +103,7 @@ const Homepage = ({ navigation }) => {
                 <View style={styles.imageWrapper}>
                   <Image source={{ uri: store.image }} style={styles.categoryImage} />
                 </View>
-                <TouchableOpacity onPress={() => handleCategoryPress(store)}>
+                <TouchableOpacity onPress={() => handleStorePress(store)}>
                   <Text style={styles.categoryText}>{store.name}</Text>
                 </TouchableOpacity>
               </View>
@@ -119,32 +124,33 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
+    height: 50,
+    backgroundColor: '#fff',
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 30,
-    marginBottom: 16,
-    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
-  drawerIcon: {
-    padding: 10,
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10,
+    color: '#000',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     borderRadius: 25,
-    flex: 1,
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
-    borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 25,
   },
@@ -152,11 +158,11 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#388E3C',
     borderRadius: 25,
+    marginLeft: 10,
   },
-  cartButton: {
+  cartIcon: {
     padding: 10,
-    backgroundColor: '#388E3C',
-    borderRadius: 25,
+    marginLeft: 10,
   },
   sectionTitle: {
     fontSize: 22,
@@ -205,11 +211,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingVertical: 8,
   },
-  categoryTextHovered: {
-    color: '#4CAF50',
-    textDecorationLine: 'underline',
-  },
 });
 
 export default Homepage;
-
