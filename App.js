@@ -8,6 +8,8 @@ import Homepage from './assets/pages/Homepage';
 import Searchpage from './assets/pages/Searchpage';
 import Cart from './assets/pages/ShoppingCart'; 
 import CategoryPage from './assets/pages/Catagories';
+import LoginPage from './assets/pages/LoginPage';
+// import SignupPage from './assets/pages/SignUpPage';
 
 const Drawer = createDrawerNavigator();
 
@@ -16,7 +18,7 @@ export default function App() {
     <NavigationContainer>
     
       <Drawer.Navigator 
-        initialRouteName="Home" 
+        initialRouteName="LogIn" 
         screenOptions={{
           swipeEnabled: true, 
           gestureEnabled: true, 
@@ -27,6 +29,8 @@ export default function App() {
           <Drawer.Screen name="Search" component={Searchpage} />
             <Drawer.Screen name="Cart" component={Cart} />
             <Drawer.Screen name="Catagory" component={CategoryPage} />
+            <Drawer.Screen name="LogIn" component={LoginPage} options={{ headerShown: true }}/>
+        
 
           {/* You can add more screens here as needed */}
         </Drawer.Navigator>
