@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 
 
 const CategoryPage = ({ route, navigation }) => {
-  const { categoryId, categoryName } = route.params;
+  // const { categoryId, categoryName } = route.params;
   
 
   const items = [
