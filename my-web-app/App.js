@@ -8,6 +8,7 @@ import Homepage from './src/pages/Homepage';
 import Categories from './src/pages/Categories'; 
 import SearchPage from './src/pages/Searchpage'; 
 import Cart from './src/pages/ShoppingCart'; 
+import LandingPage from './src/pages/LandingPage';
 
 
 const Stack = createStackNavigator();
@@ -15,7 +16,12 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Homepage">
+      <Stack.Navigator initialRouteName="LandingPage">
+      <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
+          options={{ headerShown: false }} 
+        />
         <Stack.Screen
           name="LogIn"
           component={LoginPage}
