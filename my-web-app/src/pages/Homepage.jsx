@@ -7,26 +7,22 @@ const Homepage = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [apiData, setApiData] = useState([]);
 
-  
-
-
-
   const categories = [
-    { id: '1', name: 'Produce', image: '../assets/Produce.jpg' },
-    { id: '2', name: 'Dairy', image: '../assets/Dairy.jpg' },
-    { id: '3', name: 'Snacks', image: '../assets/Snacks.jpg' },
-    { id: '4', name: 'Meat', image: '../assets/Meat.jpg' },
-    { id: '5', name: 'Bakery', image: '../assets/Bakery.jpg' },
-    { id: '6', name: 'Frozen Foods', image: '../assets/Frozenfood.jpg' },
-    { id: '7', name: 'Drinks', image: '../assets/Drinks.jpg' },
-    { id: '8', name: 'Household', image: '../assets/Houshold.jpg' },
+    { id: '1', name: 'Produce', image: require('../assets/Produce.jpg') },
+    { id: '2', name: 'Dairy', image: require('../assets/Dairy.jpg') },
+    { id: '3', name: 'Snacks', image: require('../assets/Snacks.jpg') },
+    { id: '4', name: 'Meat', image: require('../assets/Meat.jpg') },
+    { id: '5', name: 'Bakery', image: require('../assets/Bakery.jpg') },
+    { id: '6', name: 'Frozen Foods', image: require('../assets/Frozenfood.jpg') },
+    { id: '7', name: 'Drinks', image: require('../assets/Drinks.jpg') },
+    { id: '8', name: 'Household', image: require('../assets/Houshold.jpg') },
   ];
- 
+
   const stores = [
-    { id: '9', name: 'Costco', image: '../assets/costco.png' },
-    { id: '10', name: 'Walmart', image: '../assets/walmart.jpg' },
-    { id: '11', name: 'Grocery Outlet', image: '../assets/Groceryoutlet.png' },
-    { id: '12', name: 'Walgreens', image: '../assets/walgreens.png' },
+    { id: '9', name: 'Costco', image: require('../assets/Costco.png') },
+    { id: '10', name: 'Walmart', image: require('../assets/walmart.jpg') },
+    { id: '11', name: 'Grocery Outlet', image: require('../assets/Groceryoutlet.png') },
+    { id: '12', name: 'Walgreens', image: require('../assets/walgreens.png') },
   ];
 
   const handleCategoryPress = (category) => {
@@ -44,29 +40,39 @@ const Homepage = ({ navigation }) => {
       colors={['#4CAF50', '#388E3C', '#2E7D32']}
       style={styles.gradientContainer}
     >
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Custom Header with Drawer Button */}
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        {/* Custom Header with Drawer Button, Search, and Cart */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <FontAwesome name="bars" size={24} color="#000" />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Home</Text>
-        </View>
 
-{/* Search Bar with Cart Icon */}
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search for items..."
-            value={search}
-            onChangeText={setSearch}
+          {/* Logo Image */}
+          <Image
+            source={require('../assets/logo.png')} // Replace with your logo path
+            style={styles.logoImage}
           />
-          <TouchableOpacity style={styles.searchIcon}>
-            <FontAwesome name="search" size={20} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cartIcon} onPress={() => navigation.navigate('Cart')}>
-            <FontAwesome name="shopping-cart" size={24} color="#388E3C" />
-          </TouchableOpacity>
+
+          {/* Removed the Home text */}
+
+          {/* Search Bar with Search, Account, and Cart Icons on the right */}
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for items..."
+              value={search}
+              onChangeText={setSearch}
+            />
+            <TouchableOpacity style={styles.searchIcon}>
+              <FontAwesome name="search" size={20} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cartIcon} onPress={() => navigation.navigate('Cart')}>
+              <FontAwesome name="shopping-cart" size={24} color="#388E3C" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.accountIcon} onPress={() => navigation.navigate('Account')}>
+              <FontAwesome name="user-circle" size={24} color="#388E3C" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Categories Section */}
@@ -76,7 +82,7 @@ const Homepage = ({ navigation }) => {
             {categories.slice(0, 4).map((category) => (
               <View key={category.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                  <Image source={category.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleCategoryPress(category)}>
                   <Text style={styles.categoryText}>{category.name}</Text>
@@ -89,7 +95,7 @@ const Homepage = ({ navigation }) => {
             {categories.slice(4, 8).map((category) => (
               <View key={category.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                  <Image source={category.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleCategoryPress(category)}>
                   <Text style={styles.categoryText}>{category.name}</Text>
@@ -106,7 +112,7 @@ const Homepage = ({ navigation }) => {
             {stores.map((store) => (
               <View key={store.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: store.image }} style={styles.categoryImage} />
+                  <Image source={store.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleStorePress(store)}>
                   <Text style={styles.categoryText}>{store.name}</Text>
@@ -124,8 +130,8 @@ const styles = StyleSheet.create({
   gradientContainer: {
     flex: 1,
   },
-  container: {
-    flexGrow: 1,
+  scrollViewContainer: {
+    flexGrow: 1, // Ensures content takes the available space and allows scrolling
     padding: 16,
   },
   header: {
@@ -140,34 +146,41 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 10,
+    marginLeft: 20,
     color: '#000',
+    flex: 1, // Occupy the rest of the space in header
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 25,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+    position: 'absolute', // Position search, cart, and account icons absolutely
+    right: 10,
   },
   searchInput: {
-    flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
     borderColor: '#ddd',
     borderRadius: 25,
+    width: '70%', // Adjust this value to make the search bar longer
   },
   searchIcon: {
     padding: 10,
     backgroundColor: '#388E3C',
     borderRadius: 25,
-    marginLeft: 10,
   },
   cartIcon: {
     padding: 10,
     marginLeft: 10,
+  },
+  accountIcon: {
+    padding: 10,
+    marginLeft: 10,
+  },
+  logoImage: {
+    width: 50, // Set the width for your logo image
+    height: 100, // Set the height for your logo image
+    marginLeft: 20, // Adjust the margin for spacing
   },
   sectionTitle: {
     fontSize: 22,
@@ -183,6 +196,7 @@ const styles = StyleSheet.create({
   categoryRow: {
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap', // Allow categories to wrap if they don't fit in one row
     marginBottom: 16,
   },
   categoryCard: {
@@ -192,13 +206,13 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 200,
-    height: 260,
-    margin: 25,
+    width: 200, // Adjust size to make the cards fit better on the page
+    height: 250, // Adjust size to make the cards fit better on the page
+    margin: 8, // Smaller margin for better spacing
   },
   imageWrapper: {
     backgroundColor: '#e0e0e0',
-    borderRadius: 8,
+    borderRadius: 20,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
