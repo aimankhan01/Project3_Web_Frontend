@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderColor: '#ddd',
     borderRadius: 25,
-    width: '70%', // Adjust this value to make the search bar longer
+    width: 750, // Adjust this value to make the search bar longer
   },
   searchIcon: {
     padding: 10,
