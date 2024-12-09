@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,13 +17,18 @@ export default function LoginPage() {
         {/* Home Icon */}
         <TouchableOpacity 
           style={styles.homeIconContainer} 
-          onPress={() => navigation.navigate('Homepage')}
+          onPress={() => navigation.navigate('ProfilePage')}
         >
           <Icon name="home" size={24} color="white" />
         </TouchableOpacity>
 
-        <Text style={styles.logoText}>Your logo</Text>
-        <Text style={styles.loginText}>Login</Text>
+        {/* Logo Image */}
+        <Image
+          source={require('../assets/logo.png')} // Replace with your logo image file
+          style={styles.logoImage}
+        />
+        
+        <Text style={styles.loginText}></Text>
 
         <Text style={styles.emailtext}>Email ID</Text>
         <TextInput
@@ -59,7 +64,7 @@ export default function LoginPage() {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logInButton}>
-          <Text style={styles.signInText}>Log In</Text>
+          <Text style={styles.signInText}>LOG IN</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
@@ -83,7 +88,7 @@ const styles = StyleSheet.create({
   },
   glassEffect: {
     width: '30%',
-    height: '450px',
+    height: 'auto',
     padding: 20,
     borderRadius: 20,
     backgroundColor: 'rgba(1, 80, 1, 0.1)',
@@ -101,16 +106,17 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
   },
-  logoText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+  logoImage: {
+    width: 250,  // Adjust the size of your logo
+    height: 250,
     marginBottom: 20,
+    marginTop: -50,
   },
   loginText: {
     fontSize: 20,
     color: 'white',
     marginBottom: 20,
+    marginTop:-80,
     fontWeight: 'bold',
   },
   emailtext: {
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
   },
   logInButton: {
     width: '50%',
-    backgroundColor: '#014801',
+    backgroundColor: '#004725',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
