@@ -17,7 +17,7 @@ export default function LoginPage() {
         {/* Home Icon */}
         <TouchableOpacity 
           style={styles.homeIconContainer} 
-          onPress={() => navigation.navigate('ProfilePage')}
+          onPress={() => navigation.navigate('Homepage')}
         >
           <Icon name="home" size={24} color="white" />
         </TouchableOpacity>
