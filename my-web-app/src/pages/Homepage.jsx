@@ -7,26 +7,22 @@ const Homepage = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [apiData, setApiData] = useState([]);
 
-  
-
-
-
   const categories = [
-    { id: '1', name: 'Produce', image: '../assets/Produce.jpg' },
-    { id: '2', name: 'Dairy', image: '../assets/Dairy.jpg' },
-    { id: '3', name: 'Snacks', image: '../assets/Snacks.jpg' },
-    { id: '4', name: 'Meat', image: '../assets/Meat.jpg' },
-    { id: '5', name: 'Bakery', image: '../assets/Bakery.jpg' },
-    { id: '6', name: 'Frozen Foods', image: '../assets/Frozenfood.jpg' },
-    { id: '7', name: 'Drinks', image: '../assets/Drinks.jpg' },
-    { id: '8', name: 'Household', image: '../assets/Houshold.jpg' },
+    { id: '1', name: 'Produce', image: require('../assets/Produce.jpg') },
+    { id: '2', name: 'Dairy', image: require('../assets/Dairy.jpg') },
+    { id: '3', name: 'Snacks', image: require('../assets/Snacks.jpg') },
+    { id: '4', name: 'Meat', image: require('../assets/Meat.jpg') },
+    { id: '5', name: 'Bakery', image: require('../assets/Bakery.jpg') },
+    { id: '6', name: 'Frozen Foods', image: require('../assets/Frozenfood.jpg') },
+    { id: '7', name: 'Drinks', image: require('../assets/Drinks.jpg') },
+    { id: '8', name: 'Household', image: require('../assets/Houshold.jpg') },
   ];
- 
+
   const stores = [
-    { id: '9', name: 'Costco', image: '../assets/costco.png' },
-    { id: '10', name: 'Walmart', image: '../assets/walmart.jpg' },
-    { id: '11', name: 'Grocery Outlet', image: '../assets/Groceryoutlet.png' },
-    { id: '12', name: 'Walgreens', image: '../assets/walgreens.png' },
+    { id: '9', name: 'Costco', image: require('../assets/Costco.png') },
+    { id: '10', name: 'Walmart', image: require('../assets/walmart.jpg') },
+    { id: '11', name: 'Grocery Outlet', image: require('../assets/Groceryoutlet.png') },
+    { id: '12', name: 'Walgreens', image: require('../assets/walgreens.png') },
   ];
 
   const handleCategoryPress = (category) => {
@@ -53,7 +49,7 @@ const Homepage = ({ navigation }) => {
           <Text style={styles.headerText}>Home</Text>
         </View>
 
-{/* Search Bar with Cart Icon */}
+        {/* Search Bar with Cart Icon */}
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -76,7 +72,7 @@ const Homepage = ({ navigation }) => {
             {categories.slice(0, 4).map((category) => (
               <View key={category.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                  <Image source={category.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleCategoryPress(category)}>
                   <Text style={styles.categoryText}>{category.name}</Text>
@@ -89,7 +85,7 @@ const Homepage = ({ navigation }) => {
             {categories.slice(4, 8).map((category) => (
               <View key={category.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                  <Image source={category.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleCategoryPress(category)}>
                   <Text style={styles.categoryText}>{category.name}</Text>
@@ -106,7 +102,7 @@ const Homepage = ({ navigation }) => {
             {stores.map((store) => (
               <View key={store.id} style={styles.categoryCard}>
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: store.image }} style={styles.categoryImage} />
+                  <Image source={store.image} style={styles.categoryImage} />
                 </View>
                 <TouchableOpacity onPress={() => handleStorePress(store)}>
                   <Text style={styles.categoryText}>{store.name}</Text>
@@ -182,39 +178,29 @@ const styles = StyleSheet.create({
   },
   categoryRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 16,
+    justifyContent: 'space-around',
+    marginBottom: 20,
   },
   categoryCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    elevation: 4,
-    paddingBottom: 15,
     alignItems: 'center',
-    justifyContent: 'center',
-    width: 200,
-    height: 260,
-    margin: 25,
+    width: 100,
   },
   imageWrapper: {
-    backgroundColor: '#e0e0e0',
-    borderRadius: 8,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 100,
+    height: 100,
+    overflow: 'hidden',
+    borderRadius: 10,
     marginBottom: 10,
   },
   categoryImage: {
-    width: 150,
-    height: 150,
+    width: '100%',
+    height: '100%',
     borderRadius: 8,
   },
   categoryText: {
-    fontSize: 16,
-    color: '#388E3C',
     textAlign: 'center',
-    fontWeight: 'bold',
-    paddingVertical: 8,
+    fontSize: 14,
+    color: '#fff',
   },
 });
 

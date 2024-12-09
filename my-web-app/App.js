@@ -9,6 +9,7 @@ import Categories from './src/pages/Categories';
 import SearchPage from './src/pages/Searchpage'; 
 import Cart from './src/pages/ShoppingCart'; 
 import LandingPage from './src/pages/LandingPage';
+import ProfilePage from './src/pages/ProfilePage';
 
 
 const Stack = createStackNavigator();
@@ -35,6 +36,11 @@ export default function App() {
         <Stack.Screen
           name="Homepage"
           component={Homepage}
+          options={{ headerShown: false }} 
+        />
+         <Stack.Screen
+          name="ProfilePage"
+          component={ProfilePage}
           options={{ headerShown: false }} 
         />
         <Stack.Screen

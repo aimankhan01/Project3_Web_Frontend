@@ -17,7 +17,7 @@ export default function LoginPage() {
         {/* Home Icon */}
         <TouchableOpacity 
           style={styles.homeIconContainer} 
-          onPress={() => navigation.navigate('Homepage')}
+          onPress={() => navigation.navigate('ProfilePage')}
         >
           <Icon name="home" size={24} color="white" />
         </TouchableOpacity>
@@ -64,7 +64,7 @@ export default function LoginPage() {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logInButton}>
-          <Text style={styles.signInText}>Log In</Text>
+          <Text style={styles.signInText}>LOG IN</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   logInButton: {
     width: '50%',
-    backgroundColor: '#014801',
+    backgroundColor: '#004725',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',

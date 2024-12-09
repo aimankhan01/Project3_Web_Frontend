@@ -94,7 +94,7 @@ export default function SignUp() {
         {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
 
         <TouchableOpacity style={styles.logInButton} onPress={handleSignUp}>
-          <Text style={styles.signInText}>Sign Up</Text>
+          <Text style={styles.signInText}>SIGN UP</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   logInButton: {
     width: '50%',
-    backgroundColor: '#014801',
+    backgroundColor: '#004725',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
