@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';  
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';  // Import Axios for HTTP requests
 
 const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -13,18 +14,34 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const navigation = useNavigation();  
+  const navigation = useNavigation();
 
-
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match');
     } else if (!passwordStrengthRegex.test(password)) {
       setErrorMessage('Password does not meet the required criteria');
     } else {
-     
       setErrorMessage('');
-      console.log('Sign Up Successful');
+      
+      // Prepare signup data
+      const signupData = {
+        name: name,
+        email: email,
+        password: password
+      };
+
+      try {
+        const response = await axios.post('https://group17-a58cc073b33a.herokuapp.com/signup', signupData);
+        
+        if (response.status === 200) {
+          console.log('Sign Up Successful');
+          navigation.navigate('LogIn');
+        }
+      } catch (error) {
+        console.error('Error during sign up:', error.response ? error.response.data : error.message);
+        setErrorMessage('Failed to sign up. Please try again.');
+      }
     }
   };
 
@@ -36,7 +53,7 @@ export default function SignUp() {
     >
       <View style={styles.glassEffect}>
         <Image 
-          source={require('../assets/logo.png')}  // Replace with your logo path
+          source={require('../assets/logo.png')} 
           style={styles.logoImage}
         />
         <Text style={styles.loginText}></Text>
@@ -131,7 +148,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   logoImage: {
-    width: 250,  // Adjust the size of your logo
+    width: 250,
     height: 250,
     marginBottom: 20,
     marginTop: -50,
@@ -144,7 +161,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   name: {
-    width: '60%', 
+    width: '60%',
     height: 40,   
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 10,
@@ -153,7 +170,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginBottom: 15,
   },
-
   emailtext:{
     fontSize: 15,
     color: 'white',

@@ -40,7 +40,7 @@ const CategoryPage = ({ route, navigation }) => {
   };
 
   const addToCart = () => {
-    setCart((prevCart) => [...prevCart, ...selectedItems]);
+    setCart((prevCart) => [...prevCart, ...i]);
     navigation.navigate('Cart', { cartItems: [...cart, ...selectedItems] });
   };
 
