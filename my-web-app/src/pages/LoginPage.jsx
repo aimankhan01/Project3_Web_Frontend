@@ -20,7 +20,6 @@ export default function LoginPage() {
       if (response.ok) {
         const userObject = await response.json();
         Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
-        // Navigate to Homepage
         navigation.reset({
           index: 0,
           routes: [{ name: 'Homepage', params: { user: userObject } }],
@@ -52,7 +51,7 @@ export default function LoginPage() {
 
         {/* Logo Image */}
         <Image
-          source={require('../assets/logo.png')} // Replace with your logo image file
+          source={require('../assets/logo.png')} 
           style={styles.logoImage}
         />
 
