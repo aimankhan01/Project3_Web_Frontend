@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../../UserContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false); // Define passwordVisible state
+  const { setUser } = useUser(); // Access context function to set user
   const navigation = useNavigation();
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userObject = JSON.parse(storedUser);
+      setUser(userObject);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ProfilePage' }],
+      });
+    }
+  }, [navigation, setUser]);
 
   const handleLogin = async () => {
     try {
@@ -16,13 +31,17 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-  
+
       if (response.ok) {
         const userObject = await response.json();
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify(userObject));
+        console.log('Stored user:', userObject);
         Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
+        setUser(userObject); // Save user in context
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Homepage', params: { user: userObject } }],
+          routes: [{ name: 'ProfilePage' }], // Navigate to Profile page after login
         });
       } else {
         const errorMessage = await response.text();

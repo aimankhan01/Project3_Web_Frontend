@@ -70,7 +70,7 @@ const Homepage = ({ navigation }) => {
             <TouchableOpacity style={styles.cartIcon} onPress={() => navigation.navigate('Cart')}>
               <FontAwesome name="shopping-cart" size={24} color="#388E3C" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.accountIcon} onPress={() => navigation.navigate('Account')}>
+            <TouchableOpacity style={styles.accountIcon} onPress={() => navigation.navigate('ProfilePage')}>
               <FontAwesome name="user-circle" size={24} color="#388E3C" />
             </TouchableOpacity>
           </View>
