@@ -27,8 +27,9 @@ const Homepage = ({ navigation }) => {
 
   const handleCategoryPress = (category) => {
     console.log(`Clicked on ${category.name}`);
-    navigation.navigate('CategoryDetail', { categoryId: category.id, categoryName: category.name });
+    navigation.navigate('CategoryOpen');
   };
+  
 
   const handleStorePress = (store) => {
     console.log(`Clicked on ${store.name}`);
