@@ -9,6 +9,7 @@ import Categories from './src/pages/Categories';
 import SearchPage from './src/pages/Searchpage'; 
 import Cart from './src/pages/ShoppingCart'; 
 import LandingPage from './src/pages/LandingPage';
+import CategoryOpen from './src/pages/CategoryOpen';
 import ProfilePage from './src/pages/ProfilePage';
 
 
@@ -56,6 +57,11 @@ export default function App() {
         <Stack.Screen
           name="Cart"
           component={Cart}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="CategoryOpen"
+          component={CategoryOpen}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
