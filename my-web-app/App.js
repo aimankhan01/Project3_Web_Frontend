@@ -11,6 +11,7 @@ import Cart from './src/pages/ShoppingCart';
 import LandingPage from './src/pages/LandingPage';
 import ProfilePage from './src/pages/ProfilePage';
 import CategoryOpen from './src/pages/CategoryOpen';
+import OrderDetails from './src/pages/OrderDetails';
 
 
 const Stack = createStackNavigator();
@@ -18,7 +19,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LandingPage">
+      <Stack.Navigator initialRouteName="Homepage">
       <Stack.Screen
           name="LandingPage"
           component={LandingPage}
@@ -62,6 +63,11 @@ export default function App() {
         <Stack.Screen
           name="CategoryOpen"
           component={CategoryOpen}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="OrderDetails"
+          component={OrderDetails}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
