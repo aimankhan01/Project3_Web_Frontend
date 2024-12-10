@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackbar, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import axios from 'axios'; 
 
 const ProfilePage = ({ navigation }) => {
-  const [user, setUser] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
-  const [updatedData, setUpdatedData] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
+
+  const [user, setUser] = useState({ name: '', email: '' });
+  const [updatedData, setUpdatedData] = useState({ name: '', email: '' });
+
   const [editField, setEditField] = useState(null); 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userID');
+    if (userId) {
+      axios.get(`https://group17-a58cc073b33a.herokuapp.com/user?userID=${userId}`)
+        .then((response) => {
+          const fetchedUser = response.data;
+          setUser(fetchedUser); 
+          setUpdatedData(fetchedUser); 
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+          setSnackbarMessage('Failed to load user data');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+        });
+    }
+  }, []);
+
   const handleUpdate = () => {
-    setUser({ ...user, username: updatedData.username, email: updatedData.email });
+    setUser({ ...user, name: updatedData.name, email: updatedData.email });
+    localStorage.setItem('user', JSON.stringify({ ...user, name: updatedData.name, email: updatedData.email }));
     setSnackbarMessage('Profile updated successfully!');
     setSnackbarSeverity('success');
     setSnackbarOpen(true); 
@@ -20,7 +42,9 @@ const ProfilePage = ({ navigation }) => {
   };
 
   const handleLogout = () => {
-    
+
+    localStorage.removeItem('user');
+
     setSnackbarMessage('Logged out');
     setSnackbarSeverity('info');
     setSnackbarOpen(true);
@@ -50,18 +74,18 @@ const ProfilePage = ({ navigation }) => {
 
         <Box sx={{ marginBottom: '16px' }}>
           <Typography variant="h6">
-            Username: {editField === 'username' ? (
+            Username: {editField === 'name' ? (
               <TextField
                 variant="outlined"
-                value={updatedData.username}
-                onChange={(e) => setUpdatedData({ ...updatedData, username: e.target.value })}
+                value={updatedData.name}
+                onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
                 size="small"
                 sx={{ width: '200px', marginRight: '8px' }}
               />
             ) : (
-              <span>{user.username}</span>
+              <span>{user.name}</span>
             )}
-            <IconButton onClick={() => setEditField(editField === 'username' ? null : 'username')}>
+            <IconButton onClick={() => setEditField(editField === 'name' ? null : 'name')}>
               <EditIcon />
             </IconButton>
           </Typography>

@@ -12,14 +12,23 @@ import LandingPage from './src/pages/LandingPage';
 import CategoryOpen from './src/pages/CategoryOpen';
 import OrderDetails from './src/pages/OrderDetails';
 import ProfilePage from './src/pages/ProfilePage';
+import CategoryOpen from './src/pages/CategoryOpen';
+import OrderDetails from './src/pages/OrderDetails';
+import ProfilePage from './src/pages/ProfilePage';
+import { UserProvider } from './UserContext'; // Adjust the path as needed
+
+
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <UserProvider>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Homepage">
+
+      <Stack.Navigator initialRouteName="LogIn">
+
       <Stack.Screen
           name="LandingPage"
           component={LandingPage}
@@ -73,5 +82,6 @@ export default function App() {
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
+    </UserProvider>
   );
 }
