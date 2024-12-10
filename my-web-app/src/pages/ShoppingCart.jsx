@@ -5,11 +5,11 @@ const Cart = ({ navigation }) => {
   const cartItems = [
     { id: '1', name: 'Apple', price: 1.99, quantity: 2, image: './assets/apple.jpg' },
     { id: '2', name: 'Banana', price: 0.99, quantity: 3, image: './assets/banana.jpg' },
-// example cart items
+
 
     { id: '1', name: 'Apple', price: 1.99, quantity: 2, image: '../assets/peppers.jpg' },
     { id: '2', name: 'Banana', price: 0.99, quantity: 3, image: '../assets/peppers.jpg' },
-    // Add more cart items here
+
   ];
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);

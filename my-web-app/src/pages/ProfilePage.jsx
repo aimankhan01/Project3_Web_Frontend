@@ -5,8 +5,10 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from 'axios'; 
 
 const ProfilePage = ({ navigation }) => {
+
   const [user, setUser] = useState({ name: '', email: '' });
   const [updatedData, setUpdatedData] = useState({ name: '', email: '' });
+
   const [editField, setEditField] = useState(null); 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -40,7 +42,9 @@ const ProfilePage = ({ navigation }) => {
   };
 
   const handleLogout = () => {
+
     localStorage.removeItem('user');
+
     setSnackbarMessage('Logged out');
     setSnackbarSeverity('info');
     setSnackbarOpen(true);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -7,6 +8,7 @@ import { useUser } from '../../UserContext';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [passwordVisible, setPasswordVisible] = useState(false); 
   const { setUser } = useUser(); 
   const navigation = useNavigation();
@@ -23,6 +25,7 @@ export default function LoginPage() {
     }
   }, [navigation, setUser]);
 
+
   const handleLogin = async () => {
     try {
       const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login/admin', {
@@ -30,6 +33,7 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
+
 
       if (response.ok) {
         const userObject = await response.json();
@@ -40,6 +44,7 @@ export default function LoginPage() {
         navigation.reset({
           index: 0,
           routes: [{ name: 'ProfilePage' }], 
+
         });
       } else {
         const errorMessage = await response.text();

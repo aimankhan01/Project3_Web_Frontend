@@ -9,6 +9,8 @@ import Categories from './src/pages/Categories';
 import SearchPage from './src/pages/Searchpage'; 
 import Cart from './src/pages/ShoppingCart'; 
 import LandingPage from './src/pages/LandingPage';
+import CategoryOpen from './src/pages/CategoryOpen';
+import OrderDetails from './src/pages/OrderDetails';
 import ProfilePage from './src/pages/ProfilePage';
 import CategoryOpen from './src/pages/CategoryOpen';
 import OrderDetails from './src/pages/OrderDetails';
@@ -24,7 +26,9 @@ export default function App() {
   return (
     <UserProvider>
     <NavigationContainer>
+
       <Stack.Navigator initialRouteName="LogIn">
+
       <Stack.Screen
           name="LandingPage"
           component={LandingPage}
