@@ -1,29 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 
 const Cart = ({ navigation }) => {
   const cartItems = [
-// example cart items
-
     { id: '1', name: 'Apple', price: 1.99, quantity: 2, image: './assets/apple.jpg' },
     { id: '2', name: 'Banana', price: 0.99, quantity: 3, image: './assets/banana.jpg' },
-    // Add more cart items here
   ];
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  const handleCheckout = async () => {
+    try {
+      // Simulating the checkout and fetching order details
+      const orderId = 123; // Replace with dynamic orderID logic if needed
+      const response = await fetch(`https://group17-a58cc073b33a.herokuapp.com/order`);
+      const orderDetails = await response.json();
+      navigation.navigate('OrderDetails', { orderDetails });
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header with Back Button */}
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-
         <Text style={styles.headerTitle}>Shopping Cart</Text>
       </View>
 
-      {/* Cart Items List */}
+      {/* Cart Items */}
       <FlatList
         data={cartItems}
         keyExtractor={(item) => item.id}
@@ -39,18 +47,17 @@ const Cart = ({ navigation }) => {
         )}
       />
 
-      {/* Cart Total */}
+      {/* Total and Checkout */}
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
       </View>
-
-      {/* Checkout Button */}
-      <TouchableOpacity style={styles.checkoutButton} onPress={() => navigation.navigate('Checkout')}>
+      <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
         <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
