@@ -14,7 +14,6 @@ import OrderDetails from './src/pages/OrderDetails';
 import ProfilePage from './src/pages/ProfilePage';
 import CategoryOpen from './src/pages/CategoryOpen';
 import OrderDetails from './src/pages/OrderDetails';
-import ProfilePage from './src/pages/ProfilePage';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
 
 

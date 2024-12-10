@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login/admin', {
+      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
