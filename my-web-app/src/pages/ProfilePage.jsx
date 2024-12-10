@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackbar, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import axios from 'axios'; // Import axios
+import axios from 'axios'; 
 
 const ProfilePage = ({ navigation }) => {
   const [user, setUser] = useState({ name: '', email: '' });
@@ -13,15 +13,13 @@ const ProfilePage = ({ navigation }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
-    // Get user ID from localStorage and fetch user details from the backend
     const userId = localStorage.getItem('userID');
     if (userId) {
-      // Make an API request to fetch user data from backend
       axios.get(`https://group17-a58cc073b33a.herokuapp.com/user?userID=${userId}`)
         .then((response) => {
           const fetchedUser = response.data;
-          setUser(fetchedUser); // Set user data from API response
-          setUpdatedData(fetchedUser); // Set initial data for update
+          setUser(fetchedUser); 
+          setUpdatedData(fetchedUser); 
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);

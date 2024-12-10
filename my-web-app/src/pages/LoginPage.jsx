@@ -7,12 +7,11 @@ import { useUser } from '../../UserContext';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false); // Define passwordVisible state
-  const { setUser } = useUser(); // Access context function to set user
+  const [passwordVisible, setPasswordVisible] = useState(false); 
+  const { setUser } = useUser(); 
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Check if user is already logged in
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const userObject = JSON.parse(storedUser);
@@ -34,14 +33,13 @@ export default function LoginPage() {
 
       if (response.ok) {
         const userObject = await response.json();
-        // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(userObject));
         console.log('Stored user:', userObject);
         Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
-        setUser(userObject); // Save user in context
+        setUser(userObject); 
         navigation.reset({
           index: 0,
-          routes: [{ name: 'ProfilePage' }], // Navigate to Profile page after login
+          routes: [{ name: 'ProfilePage' }], 
         });
       } else {
         const errorMessage = await response.text();
