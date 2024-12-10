@@ -3,7 +3,7 @@ import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackb
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 
-const ProfilePage = () => {
+const ProfilePage = ({ navigation }) => {
   const [user, setUser] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
   const [updatedData, setUpdatedData] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
   const [editField, setEditField] = useState(null); 
@@ -20,9 +20,11 @@ const ProfilePage = () => {
   };
 
   const handleLogout = () => {
+    
     setSnackbarMessage('Logged out');
     setSnackbarSeverity('info');
     setSnackbarOpen(true);
+    navigation.navigate('LogIn');
   };
 
   const handleSnackbarClose = () => {
