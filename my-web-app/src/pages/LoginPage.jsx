@@ -1,11 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation();
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (response.ok) {
+        const userObject = await response.json();
+        Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Homepage', params: { user: userObject } }],
+        });
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert('Login Failed', errorMessage);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
+  };
 
   return (
     <ImageBackground
@@ -15,15 +42,18 @@ export default function LoginPage() {
     >
       <View style={styles.glassEffect}>
         {/* Home Icon */}
-        <TouchableOpacity 
-          style={styles.homeIconContainer} 
+        <TouchableOpacity
+          style={styles.homeIconContainer}
           onPress={() => navigation.navigate('Homepage')}
         >
           <Icon name="home" size={24} color="white" />
         </TouchableOpacity>
 
-        <Text style={styles.logoText}>Your logo</Text>
-        <Text style={styles.loginText}>Login</Text>
+        {/* Logo Image */}
+        <Image
+          source={require('../assets/logo.png')} 
+          style={styles.logoImage}
+        />
 
         <Text style={styles.emailtext}>Email ID</Text>
         <TextInput
@@ -32,6 +62,8 @@ export default function LoginPage() {
           placeholderTextColor="rgba(255, 255, 255, 0.7)"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <Text style={styles.emailtext}>Password</Text>
@@ -41,6 +73,8 @@ export default function LoginPage() {
             placeholder="Password"
             placeholderTextColor="rgba(255, 255, 255, 0.7)"
             secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={setPassword}
           />
           <TouchableOpacity
             onPress={() => setPasswordVisible(!passwordVisible)}
@@ -58,8 +92,8 @@ export default function LoginPage() {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logInButton}>
-          <Text style={styles.signInText}>Log In</Text>
+        <TouchableOpacity style={styles.logInButton} onPress={handleLogin}>
+          <Text style={styles.signInText}>LOG IN</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
@@ -83,7 +117,7 @@ const styles = StyleSheet.create({
   },
   glassEffect: {
     width: '30%',
-    height: '450px',
+    height: 'auto',
     padding: 20,
     borderRadius: 20,
     backgroundColor: 'rgba(1, 80, 1, 0.1)',
@@ -101,17 +135,11 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
   },
-  logoText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+  logoImage: {
+    width: 250,
+    height: 250,
     marginBottom: 20,
-  },
-  loginText: {
-    fontSize: 20,
-    color: 'white',
-    marginBottom: 20,
-    fontWeight: 'bold',
+    marginTop: -50,
   },
   emailtext: {
     fontSize: 15,
@@ -133,13 +161,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'flex-end',
     marginVertical: 5,
-    marginTop: '-10px',
     marginLeft: '130px',
     marginBottom: '20px',
   },
   logInButton: {
     width: '50%',
-    backgroundColor: '#014801',
+    backgroundColor: '#004725',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',

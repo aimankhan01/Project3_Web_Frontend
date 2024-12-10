@@ -28,6 +28,7 @@ const Homepage = ({ navigation }) => {
   const handleCategoryPress = (category) => {
     console.log(`Clicked on ${category.name}`);
     navigation.navigate('CategoryOpen');
+    navigation.navigate('Categories', { categoryId: category.id, categoryName: category.name });
   };
   
 
@@ -39,9 +40,9 @@ const Homepage = ({ navigation }) => {
   return (
     <LinearGradient
       colors={['#4CAF50', '#388E3C', '#2E7D32']}
-      style={styles.gradientContainer}
+      style={[styles.gradientContainer, { flex: 1 }]}
     >
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer} style={{ flex: 1 }}>
         {/* Custom Header with Drawer Button, Search, and Cart */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
@@ -70,7 +71,7 @@ const Homepage = ({ navigation }) => {
             <TouchableOpacity style={styles.cartIcon} onPress={() => navigation.navigate('Cart')}>
               <FontAwesome name="shopping-cart" size={24} color="#388E3C" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.accountIcon} onPress={() => navigation.navigate('Account')}>
+            <TouchableOpacity style={styles.accountIcon} onPress={() => navigation.navigate('ProfilePage')}>
               <FontAwesome name="user-circle" size={24} color="#388E3C" />
             </TouchableOpacity>
           </View>
@@ -134,6 +135,8 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1, // Ensures content takes the available space and allows scrolling
     padding: 16,
+    paddingBottom: 100,
+    
   },
   header: {
     height: 50,
