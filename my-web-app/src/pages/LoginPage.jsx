@@ -1,11 +1,60 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../../UserContext';
 
 export default function LoginPage() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [passwordVisible, setPasswordVisible] = useState(false); 
+  const { setUser } = useUser(); 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userObject = JSON.parse(storedUser);
+      setUser(userObject);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ProfilePage' }],
+      });
+    }
+  }, [navigation, setUser]);
+
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+
+      if (response.ok) {
+        const userObject = await response.json();
+        localStorage.setItem('user', JSON.stringify(userObject));
+        console.log('Stored user:', userObject);
+        Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
+        setUser(userObject); 
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'ProfilePage' }], 
+
+        });
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert('Login Failed', errorMessage);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
+  };
 
   return (
     <ImageBackground
@@ -15,8 +64,8 @@ export default function LoginPage() {
     >
       <View style={styles.glassEffect}>
         {/* Home Icon */}
-        <TouchableOpacity 
-          style={styles.homeIconContainer} 
+        <TouchableOpacity
+          style={styles.homeIconContainer}
           onPress={() => navigation.navigate('Homepage')}
         >
           <Icon name="home" size={24} color="white" />
@@ -24,11 +73,9 @@ export default function LoginPage() {
 
         {/* Logo Image */}
         <Image
-          source={require('../assets/logo.png')} // Replace with your logo image file
+          source={require('../assets/logo.png')} 
           style={styles.logoImage}
         />
-        
-        <Text style={styles.loginText}></Text>
 
         <Text style={styles.emailtext}>Email ID</Text>
         <TextInput
@@ -37,6 +84,8 @@ export default function LoginPage() {
           placeholderTextColor="rgba(255, 255, 255, 0.7)"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <Text style={styles.emailtext}>Password</Text>
@@ -46,6 +95,8 @@ export default function LoginPage() {
             placeholder="Password"
             placeholderTextColor="rgba(255, 255, 255, 0.7)"
             secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={setPassword}
           />
           <TouchableOpacity
             onPress={() => setPasswordVisible(!passwordVisible)}
@@ -63,7 +114,7 @@ export default function LoginPage() {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logInButton}>
+        <TouchableOpacity style={styles.logInButton} onPress={handleLogin}>
           <Text style={styles.signInText}>LOG IN</Text>
         </TouchableOpacity>
 
@@ -107,17 +158,10 @@ const styles = StyleSheet.create({
     left: 10,
   },
   logoImage: {
-    width: 250,  // Adjust the size of your logo
+    width: 250,
     height: 250,
     marginBottom: 20,
     marginTop: -50,
-  },
-  loginText: {
-    fontSize: 20,
-    color: 'white',
-    marginBottom: 20,
-    marginTop:-80,
-    fontWeight: 'bold',
   },
   emailtext: {
     fontSize: 15,
@@ -139,7 +183,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'flex-end',
     marginVertical: 5,
-    marginTop: '-10px',
     marginLeft: '130px',
     marginBottom: '20px',
   },

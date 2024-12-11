@@ -1,26 +1,57 @@
-import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackbar, Alert } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackbar, Alert, Card, CardContent, CardHeader } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import axios from 'axios';
 
 const ProfilePage = ({ navigation }) => {
-  const [user, setUser] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
-  const [updatedData, setUpdatedData] = useState({ username: 'JohnDoe', email: 'johndoe@example.com' });
+
+  const [user, setUser] = useState({ name: '', email: '' });
+  const [updatedData, setUpdatedData] = useState({ name: '', email: '' });
+  const [orders, setOrders] = useState([]);  // New state for orders
   const [editField, setEditField] = useState(null); 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userID');
+    if (userId) {
+      axios.get(`https://group17-a58cc073b33a.herokuapp.com/user?userID=${userId}`)
+        .then((response) => {
+          const fetchedUser = response.data;
+          setUser(fetchedUser);
+          setUpdatedData(fetchedUser); 
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+          setSnackbarMessage('Failed to load user data');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+        });
+
+      // Fetch orders for the user
+      axios.get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${userId}`)
+        .then((response) => {
+          setOrders(response.data);  // Assume orders are returned in an array
+        })
+        .catch((error) => {
+          console.error('Error fetching orders:', error);
+        });
+    }
+  }, []);
+
   const handleUpdate = () => {
-    setUser({ ...user, username: updatedData.username, email: updatedData.email });
+    setUser({ ...user, name: updatedData.name, email: updatedData.email });
+    localStorage.setItem('user', JSON.stringify({ ...user, name: updatedData.name, email: updatedData.email }));
     setSnackbarMessage('Profile updated successfully!');
     setSnackbarSeverity('success');
-    setSnackbarOpen(true); 
-    setEditField(null); 
+    setSnackbarOpen(true);
+    setEditField(null);
   };
 
   const handleLogout = () => {
-    
+    localStorage.removeItem('user');
     setSnackbarMessage('Logged out');
     setSnackbarSeverity('info');
     setSnackbarOpen(true);
@@ -50,18 +81,18 @@ const ProfilePage = ({ navigation }) => {
 
         <Box sx={{ marginBottom: '16px' }}>
           <Typography variant="h6">
-            Username: {editField === 'username' ? (
+            Username: {editField === 'name' ? (
               <TextField
                 variant="outlined"
-                value={updatedData.username}
-                onChange={(e) => setUpdatedData({ ...updatedData, username: e.target.value })}
+                value={updatedData.name}
+                onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
                 size="small"
                 sx={{ width: '200px', marginRight: '8px' }}
               />
             ) : (
-              <span>{user.username}</span>
+              <span>{user.name}</span>
             )}
-            <IconButton onClick={() => setEditField(editField === 'username' ? null : 'username')}>
+            <IconButton onClick={() => setEditField(editField === 'name' ? null : 'name')}>
               <EditIcon />
             </IconButton>
           </Typography>
@@ -87,6 +118,31 @@ const ProfilePage = ({ navigation }) => {
         <Button variant="contained" onClick={handleUpdate} color="primary" sx={{ display: editField ? 'block' : 'none' }}>
           Update Profile
         </Button>
+
+        {/* MY ORDERS Section */}
+        <Box sx={{ width: '100%', marginTop: '40px' }}>
+          <Typography variant="h5" sx={{ marginBottom: '16px' }}>
+            My Orders
+          </Typography>
+
+          {orders.length === 0 ? (
+            <Typography variant="body1">You have no orders yet.</Typography>
+          ) : (
+            orders.map((order, index) => (
+              <Card sx={{ marginBottom: '16px', boxShadow: 3, borderRadius: '8px' }} key={index}>
+                <CardHeader title={`Order #${order.id}`} subheader={`Placed on ${new Date(order.date).toLocaleDateString()}`} />
+                <CardContent>
+                  <Typography variant="body1" sx={{ marginBottom: '8px' }}>
+                    Status: {order.status}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Total: ${order.total}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </Box>
       </Box>
 
       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
