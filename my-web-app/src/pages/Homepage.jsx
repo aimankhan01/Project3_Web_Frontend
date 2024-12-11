@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 const Homepage = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [apiData, setApiData] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+
 
   const categories = [
     { id: '1', name: 'Produce', image: require('../assets/Produce.jpg') },
@@ -35,6 +37,10 @@ const Homepage = ({ navigation }) => {
   const handleStorePress = (store) => {
     console.log(`Clicked on ${store.name}`);
     navigation.navigate('Search', { searchQuery: store.name });
+  };
+
+  const goToCart = () => {
+    navigation.navigate('Cart', { cartItems });
   };
 
   return (

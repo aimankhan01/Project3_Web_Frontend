@@ -1,50 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 
-const Cart = ({ navigation }) => {
-  const cartItems = [
-// example cart items
+const Cart = ({ navigation, route }) => {
+  const [cartItems, setCartItems] = useState(route.params?.cartItems || []);
+  const [total, setTotal] = useState(0);
 
-    { id: '1', name: 'Apple', price: 1.99, quantity: 2, image: './assets/apple.jpg' },
-    { id: '2', name: 'Banana', price: 0.99, quantity: 3, image: './assets/banana.jpg' },
-    // Add more cart items here
-  ];
+  useEffect(() => {
+    calculateTotal(cartItems);
+  }, [cartItems]);
 
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const calculateTotal = (items) => {
+    let total = 0;
+    items.forEach((item) => {
+      const price = parseFloat(item.price);
+      const quantity = item.quantity ? parseInt(item.quantity, 10) : 1;
+      if (!isNaN(price) && isFinite(price) && quantity > 0) {
+        total += price * quantity;
+      }
+    });
+    setTotal(total);
+  };
 
   return (
     <View style={styles.container}>
-      {/* Header with Back Button */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Shopping Cart</Text>
+       <Text style={styles.headerTitle}>Shopping Cart</Text>
       </View>
 
-      {/* Cart Items List */}
       <FlatList
         data={cartItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.productID.toString()}
         renderItem={({ item }) => (
           <View style={styles.cartItem}>
             <Image source={{ uri: item.image }} style={styles.itemImage} />
             <View style={styles.itemDetails}>
               <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+              <Text style={styles.itemPrice}>${parseFloat(item.price).toFixed(2)}</Text>
               <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
             </View>
           </View>
         )}
       />
 
-      {/* Cart Total */}
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
       </View>
 
-      {/* Checkout Button */}
       <TouchableOpacity style={styles.checkoutButton} onPress={() => navigation.navigate('Checkout')}>
         <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
       </TouchableOpacity>
@@ -60,7 +65,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    textAlign: "center",
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 16,
@@ -75,60 +79,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#388E3C',
-    textAlign: 'center',
-    flex: 1,
-
   },
   cartItem: {
     flexDirection: 'row',
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    elevation: 2,
     alignItems: 'center',
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   itemImage: {
     width: 60,
     height: 60,
-    borderRadius: 8,
+    borderRadius: 5,
     marginRight: 16,
   },
   itemDetails: {
     flex: 1,
   },
   itemName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#388E3C',
   },
   itemPrice: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 14,
+    color: '#555',
   },
   itemQuantity: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 14,
+    color: '#555',
   },
   totalContainer: {
-    marginTop: 16,
-    alignItems: 'flex-end',
-    marginBottom: 32,
+    paddingVertical: 16,
+    alignItems: 'center',
   },
   totalText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#388E3C',
   },
   checkoutButton: {
+    padding: 12,
     backgroundColor: '#388E3C',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 25,
+    borderRadius: 5,
     alignItems: 'center',
+    marginTop: 16,
   },
   checkoutButtonText: {
     color: '#fff',
