@@ -1,285 +1,329 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  IconButton,
-  Divider,
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Box, Typography, IconButton, Divider, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 
 const ProfilePage = ({ navigation }) => {
-  const [user, setUser] = useState({ name: "", email: "", password: "******" });
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editValues, setEditValues] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [orders, setOrders] = useState([]);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const userObject = JSON.parse(storedUser);
-      setUser({ ...userObject, password: "******" }); // Keep password hidden
-
-      // Fetch user orders
-      axios
-        .get(
-          `https://group17-a58cc073b33a.herokuapp.com/orders?userID=${userObject.id}`
-        )
-        .then((response) => {
-          setOrders(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching orders:", error);
-        });
-    } else {
-      navigation.navigate("LoginPage");
-    }
-  }, [navigation]);
-
-  const handleEdit = () => {
-    setEditDialogOpen(true);
-    setEditValues({
-      name: user.name,
-      email: user.email,
-      password: "",
+    const [user, setUser] = useState({ name: "", email: "", password: "" });
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [editValues, setEditValues] = useState({
+        name: "",
+        email: "",
+        password: "",
     });
-  };
+    const [orders, setOrders] = useState([]);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const handleSave = () => {
-    const updatedUser = {
-      ...user,
-      name: editValues.name,
-      email: editValues.email,
-      password: editValues.password || "******", // Keep password hidden if not updated
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const storedUser = await AsyncStorage.getItem('user');
+            if (storedUser) {
+                const userObject = JSON.parse(storedUser);
+                setUser({
+                    name: userObject.name || "User Name",
+                    email: userObject.email || "User Email",
+                    password: userObject.password || "", // Store the actual password temporarily
+                });
+                // Fetch user orders
+                axios
+                    .get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${userObject.id}`)
+                    .then((response) => {
+                        setOrders(response.data);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching orders:", error);
+                    });
+            } else {
+                navigation.navigate("LogIn");
+            }
+        };
+        fetchUserData();
+    }, [navigation]);
+
+    const handleLogout = () => {
+        AsyncStorage.removeItem("user");
+        navigation.navigate("LogIn");
     };
 
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser)); // Save locally
-    setEditDialogOpen(false);
-  };
+    const handleEdit = () => {
+        const fetchStoredUser = async () => {
+            const storedUser = await AsyncStorage.getItem("user");
+            if (storedUser) {
+                const userObject = JSON.parse(storedUser);
+                setEditDialogOpen(true);
+                setEditValues({
+                    name: userObject.name || "",
+                    email: userObject.email || "",
+                    password: userObject.password || "", // Ensure the actual password is passed here
+                });
+            }
+        };
+        fetchStoredUser();
+    };
 
-  const handleCancel = () => {
-    setEditDialogOpen(false);
-  };
+    const handleSave = () => {
+        const updatedUser = {
+            name: editValues.name,
+            email: editValues.email,
+            password: editValues.password || "******", // Mask password if not provided
+        };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigation.navigate("LogIn");
-  };
+        axios
+            .put(`https://group17-a58cc073b33a.herokuapp.com/users/update?userID=${user.id}`, updatedUser)
+            .then((response) => {
+                console.log("User updated successfully", response.data);
+                setUser({ ...user, ...updatedUser });
+                AsyncStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser })); // Save updated details locally
+                setEditDialogOpen(false);
+            })
+            .catch((error) => {
+                console.error("Error updating user", error);
+            });
+    };
 
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: "16px",
-      }}
-    >
-      <Box
-        sx={{
-          maxWidth: "600px",
-          width: "100%",
-          backgroundColor: "#fff",
-          borderRadius: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          overflow: "hidden",
-        }}
-      >
-        {/* User Profile Section */}
+    const handleCancel = () => {
+        setEditDialogOpen(false);
+    };
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible((prev) => !prev);
+    };
+
+    // Helper function to display password as asterisks
+    const displayPassword = (password) => {
+        return "*".repeat(password.length);
+    };
+
+    return (
         <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            background:
-              "linear-gradient(135deg, #f46b45 0%, #eea849 100%)",
-            color: "#fff",
-            padding: "24px",
-          }}
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                backgroundColor: "#f5f5f5",
+                padding: "16px",
+            }}
         >
-          <img
-            src="https://img.icons8.com/bubbles/100/000000/user.png"
-            alt="User"
-            style={{ borderRadius: "50%", marginBottom: "16px" }}
-          />
-          <Typography variant="h6" sx={{ fontWeight: "600" }}>
-            {user.name || "User Name"}
-          </Typography>
-          <Typography variant="body2" sx={{ marginBottom: "8px" }}>
-            {user.email || "User Email"}
-          </Typography>
-          <IconButton sx={{ color: "#fff" }} onClick={handleEdit}>
-            <EditIcon />
-          </IconButton>
-        </Box>
-
-        {/* Information Section */}
-        <Box sx={{ padding: "24px" }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: "600",
-              marginBottom: "16px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "8px",
-            }}
-          >
-            Information
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box>
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: "600", marginBottom: "4px" }}
-              >
-                Username
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#888" }}>
-                {user.name || "N/A"}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: "600", marginBottom: "4px" }}
-              >
-                Email
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#888" }}>
-                {user.email || "N/A"}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ marginTop: "16px" }}>
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: "600", marginBottom: "4px" }}
-            >
-              Password
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#888" }}>
-              {user.password}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Divider />
-
-        {/* Orders Section */}
-        <Box sx={{ padding: "24px" }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: "600",
-              marginBottom: "16px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "8px",
-            }}
-          >
-            My Orders
-          </Typography>
-          {orders.length > 0 ? (
-            orders.map((order) => (
-              <Box
-                key={order.id}
+            <Box
                 sx={{
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  padding: "12px",
-                  marginBottom: "12px",
+                    maxWidth: "600px",
+                    width: "100%",
+                    backgroundColor: "#fff",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    overflow: "hidden",
                 }}
-              >
-                <Typography variant="body2" sx={{ fontWeight: "600" }}>
-                  Order ID: {order.id}
-                </Typography>
-                <Typography variant="body2">
-                  Date: {order.date}
-                </Typography>
-                <Typography variant="body2">
-                  Total: ${order.total}
-                </Typography>
-              </Box>
-            ))
-          ) : (
-            <Typography variant="body2" sx={{ color: "#888" }}>
-              No orders found.
-            </Typography>
-          )}
+            >
+                {/* User Profile Section */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background:
+                            "linear-gradient(135deg, #004725 0%, #3a7f5a 100%)",
+                        color: "#fff",
+                        padding: "24px",
+                    }}
+                >
+                    <img
+                        src="https://img.icons8.com/bubbles/100/000000/user.png"
+                        alt="User"
+                        style={{ borderRadius: "50%", marginBottom: "16px" }}
+                    />
+                    <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                        {user.name || "User Name"}
+                    </Typography>
+                    <Typography variant="body2" sx={{ marginBottom: "8px" }}>
+                        {user.email || "User Email"}
+                    </Typography>
+                </Box>
+
+                {/* Information Section */}
+                <Box sx={{ padding: "24px" }}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: "600",
+                            marginBottom: "16px",
+                            borderBottom: "1px solid #ddd",
+                            paddingBottom: "8px",
+                            display: "flex",
+                            alignItems: "center", // Align items vertically
+                        }}
+                    >
+                        Information
+                        <IconButton
+                            sx={{ color: "#004725", marginLeft: "8px" }} // Adjusted for spacing
+                            onClick={handleEdit}
+                        >
+                            <EditIcon />
+                        </IconButton>
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Box>
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: "600", marginBottom: "4px" }}
+                            >
+                                Username
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "#888" }}>
+                                {user.name || "N/A"}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    fontWeight: "600",
+                                    marginBottom: "4px",
+                                    marginLeft: "-250px",
+                                }}
+                            >
+                                Email
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "#888", marginLeft: "-250px" }}>
+                                {user.email || "N/A"}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    <Box sx={{ marginTop: "16px" }}>
+                        <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "600", marginBottom: "4px" }}
+                        >
+                            Password
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#888" }}>
+                            {displayPassword(user.password)} {/* Display asterisks here */}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Divider />
+
+                {/* Orders Section */}
+                <Box sx={{ padding: "24px" }}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: "600",
+                            marginBottom: "16px",
+                            borderBottom: "1px solid #ddd",
+                            paddingBottom: "8px",
+                        }}
+                    >
+                        My Orders
+                    </Typography>
+                    {orders.length > 0 ? (
+                        orders.map((order) => (
+                            <Box
+                                key={order.id}
+                                sx={{
+                                    border: "1px solid #ddd",
+                                    borderRadius: "8px",
+                                    padding: "12px",
+                                    marginBottom: "12px",
+                                }}
+                            >
+                                <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                                    Order ID: {order.id}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Date: {order.date}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Total: ${order.total}
+                                </Typography>
+                            </Box>
+                        ))
+                    ) : (
+                        <Typography variant="body2" sx={{ color: "#888" }}>
+                            No orders found.
+                        </Typography>
+                    )}
+                </Box>
+
+                <Divider />
+
+                {/* Footer Section */}
+                <Box sx={{ textAlign: "center", padding: "16px" }}>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: "#3a7f5a", // Custom green color
+                            '&:hover': {
+                                backgroundColor: "#31724c", // Slightly darker shade on hover
+                            },
+                        }}
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </Button>
+                </Box>
+            </Box>
+
+            {/* Edit Dialog */}
+            <Dialog open={editDialogOpen} onClose={handleCancel}>
+                <DialogTitle>Edit Profile</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Username"
+                        fullWidth
+                        margin="dense"
+                        value={editValues.name}
+                        onChange={(e) =>
+                            setEditValues({ ...editValues, name: e.target.value })
+                        }
+                    />
+                    <TextField
+                        label="Email"
+                        fullWidth
+                        margin="dense"
+                        value={editValues.email}
+                        onChange={(e) =>
+                            setEditValues({ ...editValues, email: e.target.value })
+                        }
+                    />
+                    <TextField
+                        label="Password"
+                        fullWidth
+                        margin="dense"
+                        type={passwordVisible ? "text" : "password"} // Toggle between text and password
+                        value={editValues.password} // Display the password value here
+                        onChange={(e) =>
+                            setEditValues({ ...editValues, password: e.target.value })
+                        }
+                        InputProps={{
+                            endAdornment: (
+                                <IconButton
+                                    onClick={togglePasswordVisibility}
+                                    edge="end"
+                                    sx={{ color: "#004725" }}
+                                >
+                                    {passwordVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                </IconButton>
+                            ),
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCancel} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSave} color="primary">
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
-
-        <Divider />
-
-        {/* Footer Section */}
-        <Box sx={{ textAlign: "center", padding: "16px" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onClose={handleCancel}>
-        <DialogTitle>Edit Profile</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Username"
-            fullWidth
-            margin="dense"
-            value={editValues.name}
-            onChange={(e) =>
-              setEditValues({ ...editValues, name: e.target.value })
-            }
-          />
-          <TextField
-            label="Email"
-            fullWidth
-            margin="dense"
-            value={editValues.email}
-            onChange={(e) =>
-              setEditValues({ ...editValues, email: e.target.value })
-            }
-          />
-          <TextField
-            label="Password"
-            fullWidth
-            margin="dense"
-            type="password"
-            value={editValues.password}
-            onChange={(e) =>
-              setEditValues({ ...editValues, password: e.target.value })
-            }
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
+    );
 };
 
 export default ProfilePage;
