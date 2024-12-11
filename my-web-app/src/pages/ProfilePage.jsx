@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Image } from 'react-native';
 import { Box, Typography, IconButton, Divider, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -101,13 +102,34 @@ const ProfilePage = ({ navigation }) => {
         <Box
             sx={{
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                flexDirection: "column",
                 minHeight: "100vh",
                 backgroundColor: "#f5f5f5",
-                padding: "16px",
+                paddingTop: "64px", // Adjust padding for header space
             }}
         >
+            {/* Header */}
+            <Box
+                sx={{
+                    display: "flex",
+                    marginTop: "-50px",
+                    marginBottom: "20px",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    backgroundColor: "#004725", // Header background color
+                    height: "64px", // Fixed height for the header
+                    padding: "0 16px", // Horizontal padding for spacing
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle shadow below header
+                }}
+            >
+                <Image
+    source={require('../assets/logo.png')} // Correct way to use images in React Native
+     alt="App Logo"
+    style={{ height: '100px', width: '100px', marginTop: '10px' , marginLeft: '-10px'}}
+/>
+            </Box>
+
+            {/* Main Profile Content */}
             <Box
                 sx={{
                     maxWidth: "600px",
@@ -116,6 +138,7 @@ const ProfilePage = ({ navigation }) => {
                     borderRadius: "10px",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                     overflow: "hidden",
+                    margin: "24px auto", // Center content with margin
                 }}
             >
                 {/* User Profile Section */}
@@ -137,11 +160,9 @@ const ProfilePage = ({ navigation }) => {
                         style={{ borderRadius: "50%", marginBottom: "16px" }}
                     />
                     <Typography variant="h6" sx={{ fontWeight: "600" }}>
-                        {user.name || "User Name"}
+                        {user.name+"'s Profile" || "User Name"}
                     </Typography>
-                    <Typography variant="body2" sx={{ marginBottom: "8px" }}>
-                        {user.email || "User Email"}
-                    </Typography>
+                    
                 </Box>
 
                 {/* Information Section */}
@@ -302,11 +323,7 @@ const ProfilePage = ({ navigation }) => {
                         }
                         InputProps={{
                             endAdornment: (
-                                <IconButton
-                                    onClick={togglePasswordVisibility}
-                                    edge="end"
-                                    sx={{ color: "#004725" }}
-                                >
+                                <IconButton onClick={togglePasswordVisibility}>
                                     {passwordVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
                                 </IconButton>
                             ),
