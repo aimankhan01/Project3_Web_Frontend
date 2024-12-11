@@ -1,155 +1,283 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, IconButton, AppBar, Toolbar, Snackbar, Alert, Card, CardContent, CardHeader } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import PersonIcon from '@mui/icons-material/Person';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Divider,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import axios from "axios";
 
 const ProfilePage = ({ navigation }) => {
-
-  const [user, setUser] = useState({ name: '', email: '' });
-  const [updatedData, setUpdatedData] = useState({ name: '', email: '' });
-  const [orders, setOrders] = useState([]);  // New state for orders
-  const [editField, setEditField] = useState(null); 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [user, setUser] = useState({ name: "", email: "", password: "******" });
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editValues, setEditValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const userId = localStorage.getItem('userID');
-    if (userId) {
-      axios.get(`https://group17-a58cc073b33a.herokuapp.com/user?userID=${userId}`)
-        .then((response) => {
-          const fetchedUser = response.data;
-          setUser(fetchedUser);
-          setUpdatedData(fetchedUser); 
-        })
-        .catch((error) => {
-          console.error('Error fetching user data:', error);
-          setSnackbarMessage('Failed to load user data');
-          setSnackbarSeverity('error');
-          setSnackbarOpen(true);
-        });
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userObject = JSON.parse(storedUser);
+      setUser({ ...userObject, password: "******" }); // Keep password hidden
 
-      // Fetch orders for the user
-      axios.get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${userId}`)
+      // Fetch user orders
+      axios
+        .get(
+          `https://group17-a58cc073b33a.herokuapp.com/orders?userID=${userObject.id}`
+        )
         .then((response) => {
-          setOrders(response.data);  // Assume orders are returned in an array
+          setOrders(response.data);
         })
         .catch((error) => {
-          console.error('Error fetching orders:', error);
+          console.error("Error fetching orders:", error);
         });
+    } else {
+      navigation.navigate("LoginPage");
     }
-  }, []);
+  }, [navigation]);
 
-  const handleUpdate = () => {
-    setUser({ ...user, name: updatedData.name, email: updatedData.email });
-    localStorage.setItem('user', JSON.stringify({ ...user, name: updatedData.name, email: updatedData.email }));
-    setSnackbarMessage('Profile updated successfully!');
-    setSnackbarSeverity('success');
-    setSnackbarOpen(true);
-    setEditField(null);
+  const handleEdit = () => {
+    setEditDialogOpen(true);
+    setEditValues({
+      name: user.name,
+      email: user.email,
+      password: "",
+    });
+  };
+
+  const handleSave = () => {
+    const updatedUser = {
+      ...user,
+      name: editValues.name,
+      email: editValues.email,
+      password: editValues.password || "******", // Keep password hidden if not updated
+    };
+
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser)); // Save locally
+    setEditDialogOpen(false);
+  };
+
+  const handleCancel = () => {
+    setEditDialogOpen(false);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    setSnackbarMessage('Logged out');
-    setSnackbarSeverity('info');
-    setSnackbarOpen(true);
-    navigation.navigate('LogIn');
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+    localStorage.removeItem("user");
+    navigation.navigate("LogIn");
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', height: "100%" }}>
-      <AppBar position="fixed" sx={{ backgroundColor: '#004725', zIndex: 1000 }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" sx={{ color: '#FDFEFE' }}>
-            Profile Page
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+        padding: "16px",
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: "600px",
+          width: "100%",
+          backgroundColor: "#fff",
+          borderRadius: "10px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+        }}
+      >
+        {/* User Profile Section */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            background:
+              "linear-gradient(135deg, #f46b45 0%, #eea849 100%)",
+            color: "#fff",
+            padding: "24px",
+          }}
+        >
+          <img
+            src="https://img.icons8.com/bubbles/100/000000/user.png"
+            alt="User"
+            style={{ borderRadius: "50%", marginBottom: "16px" }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: "600" }}>
+            {user.name || "User Name"}
           </Typography>
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{ marginTop: '80px', textAlign: 'center' }}>
-        <PersonIcon sx={{ fontSize: '100px', color: 'black' }} />
-        <Typography variant="h4" sx={{ margin: '16px 0' }}>
-          My Profile Page
-        </Typography>
-
-        <Box sx={{ marginBottom: '16px' }}>
-          <Typography variant="h6">
-            Username: {editField === 'name' ? (
-              <TextField
-                variant="outlined"
-                value={updatedData.name}
-                onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
-                size="small"
-                sx={{ width: '200px', marginRight: '8px' }}
-              />
-            ) : (
-              <span>{user.name}</span>
-            )}
-            <IconButton onClick={() => setEditField(editField === 'name' ? null : 'name')}>
-              <EditIcon />
-            </IconButton>
+          <Typography variant="body2" sx={{ marginBottom: "8px" }}>
+            {user.email || "User Email"}
           </Typography>
-          <Typography variant="h6">
-            Email: {editField === 'email' ? (
-              <TextField
-                variant="outlined"
-                type="email"
-                value={updatedData.email}
-                onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}
-                size="small"
-                sx={{ width: '200px', marginRight: '8px' }}
-              />
-            ) : (
-              <span>{user.email}</span>
-            )}
-            <IconButton onClick={() => setEditField(editField === 'email' ? null : 'email')}>
-              <EditIcon />
-            </IconButton>
-          </Typography>
+          <IconButton sx={{ color: "#fff" }} onClick={handleEdit}>
+            <EditIcon />
+          </IconButton>
         </Box>
 
-        <Button variant="contained" onClick={handleUpdate} color="primary" sx={{ display: editField ? 'block' : 'none' }}>
-          Update Profile
-        </Button>
+        {/* Information Section */}
+        <Box sx={{ padding: "24px" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "600",
+              marginBottom: "16px",
+              borderBottom: "1px solid #ddd",
+              paddingBottom: "8px",
+            }}
+          >
+            Information
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "600", marginBottom: "4px" }}
+              >
+                Username
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#888" }}>
+                {user.name || "N/A"}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "600", marginBottom: "4px" }}
+              >
+                Email
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#888" }}>
+                {user.email || "N/A"}
+              </Typography>
+            </Box>
+          </Box>
 
-        {/* MY ORDERS Section */}
-        <Box sx={{ width: '100%', marginTop: '40px' }}>
-          <Typography variant="h5" sx={{ marginBottom: '16px' }}>
+          <Box sx={{ marginTop: "16px" }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "600", marginBottom: "4px" }}
+            >
+              Password
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#888" }}>
+              {user.password}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Divider />
+
+        {/* Orders Section */}
+        <Box sx={{ padding: "24px" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "600",
+              marginBottom: "16px",
+              borderBottom: "1px solid #ddd",
+              paddingBottom: "8px",
+            }}
+          >
             My Orders
           </Typography>
-
-          {orders.length === 0 ? (
-            <Typography variant="body1">You have no orders yet.</Typography>
-          ) : (
-            orders.map((order, index) => (
-              <Card sx={{ marginBottom: '16px', boxShadow: 3, borderRadius: '8px' }} key={index}>
-                <CardHeader title={`Order #${order.id}`} subheader={`Placed on ${new Date(order.date).toLocaleDateString()}`} />
-                <CardContent>
-                  <Typography variant="body1" sx={{ marginBottom: '8px' }}>
-                    Status: {order.status}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Total: ${order.total}
-                  </Typography>
-                </CardContent>
-              </Card>
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <Box
+                key={order.id}
+                sx={{
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "12px",
+                  marginBottom: "12px",
+                }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                  Order ID: {order.id}
+                </Typography>
+                <Typography variant="body2">
+                  Date: {order.date}
+                </Typography>
+                <Typography variant="body2">
+                  Total: ${order.total}
+                </Typography>
+              </Box>
             ))
+          ) : (
+            <Typography variant="body2" sx={{ color: "#888" }}>
+              No orders found.
+            </Typography>
           )}
+        </Box>
+
+        <Divider />
+
+        {/* Footer Section */}
+        <Box sx={{ textAlign: "center", padding: "16px" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </Box>
       </Box>
 
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onClose={handleCancel}>
+        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Username"
+            fullWidth
+            margin="dense"
+            value={editValues.name}
+            onChange={(e) =>
+              setEditValues({ ...editValues, name: e.target.value })
+            }
+          />
+          <TextField
+            label="Email"
+            fullWidth
+            margin="dense"
+            value={editValues.email}
+            onChange={(e) =>
+              setEditValues({ ...editValues, email: e.target.value })
+            }
+          />
+          <TextField
+            label="Password"
+            fullWidth
+            margin="dense"
+            type="password"
+            value={editValues.password}
+            onChange={(e) =>
+              setEditValues({ ...editValues, password: e.target.value })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
