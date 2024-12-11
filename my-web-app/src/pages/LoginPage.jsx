@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,74 +8,65 @@ import { useUser } from '../../UserContext';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [passwordVisible, setPasswordVisible] = useState(false); 
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const { setUser } = useUser(); 
   const navigation = useNavigation();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userObject = JSON.parse(storedUser);
-      setUser(userObject);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Homepage' }],
-      });
-    }
+    const checkIfLoggedIn = async () => {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        const userObject = JSON.parse(storedUser);
+        setUser(userObject);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Homepage' }], // Navigate to the homepage if already logged in
+        });
+      }
+    };
+    
+    checkIfLoggedIn();
   }, [navigation, setUser]);
-
 
   const handleLogin = async () => {
     try {
       const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login', {
+        
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-
+  
       if (response.ok) {
         const userObject = await response.json();
-        localStorage.setItem('user', JSON.stringify(userObject));
+        await AsyncStorage.setItem('user', JSON.stringify(userObject));  // Store in AsyncStorage
         console.log('Stored user:', userObject);
         Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
-        setUser(userObject); 
+        setUser(userObject);
         navigation.reset({
           index: 0,
-          routes: [{ name: 'ProfilePage' }], 
-
+          routes: [{ name: 'ProfilePage' }], // Navigate to ProfilePage after successful login
         });
       } else {
         const errorMessage = await response.text();
         Alert.alert('Login Failed', errorMessage);
       }
-    }  catch (error) {
+    } catch (error) {
       console.error('Error during login:', error);
       Alert.alert('Error', `Something went wrong. Please try again. ${error.message}`);
-   }
+    }
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/leaf.jpg')}
-      style={styles.container}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require('../assets/leaf.jpg')} style={styles.container} resizeMode="cover">
       <View style={styles.glassEffect}>
         {/* Home Icon */}
-        <TouchableOpacity
-          style={styles.homeIconContainer}
-          onPress={() => navigation.navigate('Homepage')}
-        >
+        <TouchableOpacity style={styles.homeIconContainer} onPress={() => navigation.navigate('Homepage')}>
           <Icon name="home" size={24} color="white" />
         </TouchableOpacity>
 
         {/* Logo Image */}
-        <Image
-          source={require('../assets/logo.png')} 
-          style={styles.logoImage}
-        />
+        <Image source={require('../assets/logo.png')} style={styles.logoImage} />
 
         <Text style={styles.emailtext}>Email ID</Text>
         <TextInput
@@ -98,15 +89,8 @@ export default function LoginPage() {
             value={password}
             onChangeText={setPassword}
           />
-          <TouchableOpacity
-            onPress={() => setPasswordVisible(!passwordVisible)}
-            style={styles.eyeIcon}
-          >
-            <Icon
-              name={passwordVisible ? 'eye-off' : 'eye'}
-              size={24}
-              color="rgba(255, 255, 255, 0.7)"
-            />
+          <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
+            <Icon name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="rgba(255, 255, 255, 0.7)" />
           </TouchableOpacity>
         </View>
 
