@@ -20,7 +20,7 @@ export default function LoginPage() {
       setUser(userObject);
       navigation.reset({
         index: 0,
-        routes: [{ name: 'ProfilePage' }],
+        routes: [{ name: 'Homepage' }],
       });
     }
   }, [navigation, setUser]);
@@ -50,10 +50,10 @@ export default function LoginPage() {
         const errorMessage = await response.text();
         Alert.alert('Login Failed', errorMessage);
       }
-    } catch (error) {
+    }  catch (error) {
       console.error('Error during login:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
-    }
+      Alert.alert('Error', `Something went wrong. Please try again. ${error.message}`);
+   }
   };
 
   return (
