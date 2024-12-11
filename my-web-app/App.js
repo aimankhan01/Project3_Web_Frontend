@@ -16,7 +16,6 @@ import { UserProvider } from './UserContext'; // Adjust the path as needed
 
 
 
-
 const Stack = createStackNavigator();
 
 export default function App() {
