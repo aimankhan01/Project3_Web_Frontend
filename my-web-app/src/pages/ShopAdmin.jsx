@@ -14,51 +14,45 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 
-const ProductAdmin = ({ navigation }) => {
-  const [products, setProducts] = useState([]);
+const ShopAdmin = ({ navigation }) => { // Add navigation prop here if using React Navigation
+  const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newProduct, setNewProduct] = useState({
+  const [newShop, setNewShop] = useState({
     name: '',
-    price: '',
-    category: '',
-    description: '',
-    stock: '',
   });
 
   useEffect(() => {
     axios
-      .get('https://group17-a58cc073b33a.herokuapp.com/products')
+      .get('https://group17-a58cc073b33a.herokuapp.com/shops')  // Use your backend URL here
       .then((response) => {
-        setProducts(response.data);
+        setShops(response.data);
       })
-      .catch((error) => console.error('Error fetching products:', error))
+      .catch((error) => console.error('Error fetching shops:', error))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = (productID) => {
+  const handleDelete = (shopID) => {
     axios
-      .delete(`https://group17-a58cc073b33a.herokuapp.com/products/remove?productID=${productID}`)
+      .delete(`https://group17-a58cc073b33a.herokuapp.com/shops/remove?shopID=${shopID}`)
       .then(() => {
-        setProducts(products.filter((product) => product.productID !== productID));
+        setShops(shops.filter((shop) => shop.shopID !== shopID));
       })
-      .catch((error) => console.error('Error deleting product:', error));
+      .catch((error) => console.error('Error deleting shop:', error));
   };
 
-  const handleAddProduct = () => {
-    const productData = {
-      ...newProduct,
-      price: parseFloat(newProduct.price),
-      stock: parseInt(newProduct.stock, 10),
+  const handleAddShop = () => {
+    const shopData = {
+      ...newShop,
     };
 
     axios
-      .post('https://group17-a58cc073b33a.herokuapp.com/products/add', productData)
+      .post('https://group17-a58cc073b33a.herokuapp.com/shops/add', shopData)
       .then((response) => {
-        setProducts([...products, response.data]);
+        setShops([...shops, response.data]);
         setModalVisible(false); 
       })
-      .catch((error) => console.error('Error adding product:', error));
+      .catch((error) => console.error('Error adding shop:', error));
   };
 
   if (loading) {
@@ -73,9 +67,9 @@ const ProductAdmin = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Icon name="arrow-back" size={30} color="#004725" />
+          <Icon name="arrow-back" size={24} color="#004725" />
         </TouchableOpacity>
-        <Text style={styles.header}>Product Management</Text>
+        <Text style={styles.header}>Shop Management</Text>
       </View>
 
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
@@ -83,25 +77,21 @@ const ProductAdmin = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.tableRowHeader}>
-        <Text style={styles.tableHeaderCell}>Product ID</Text>
+        <Text style={styles.tableHeaderCell}>Shop ID</Text>
         <Text style={styles.tableHeaderCell}>Name</Text>
-        <Text style={styles.tableHeaderCell}>Price</Text>
-        <Text style={styles.tableHeaderCell}>Category</Text>
         <Text style={styles.tableHeaderCell}>Actions</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer}>
         <FlatList
-          data={products}
-          keyExtractor={(item) => item.productID ? item.productID.toString() : `${item.name}-${Math.random()}`}
+          data={shops}
+          keyExtractor={(item) => item.shopID ? item.shopID.toString() : `${item.name}-${Math.random()}`}
           renderItem={({ item }) => (
             <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>{item.productID}</Text>
+              <Text style={styles.tableCell}>{item.shopID}</Text>
               <Text style={styles.tableCell}>{item.name}</Text>
-              <Text style={styles.tableCell}>{item.price}</Text>
-              <Text style={styles.tableCell}>{item.category}</Text>
               <View style={styles.actionCell}>
-                <TouchableOpacity onPress={() => handleDelete(item.productID)}>
+                <TouchableOpacity onPress={() => handleDelete(item.shopID)}>
                   <Icon name="delete" size={20} color="#d9534f" style={styles.actionIcon} />
                 </TouchableOpacity>
               </View>
@@ -110,7 +100,7 @@ const ProductAdmin = ({ navigation }) => {
         />
       </ScrollView>
 
-      {/* Add Product Modal */}
+      {/* Add Shop Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -119,42 +109,17 @@ const ProductAdmin = ({ navigation }) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add New Product</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Product Name"
-              value={newProduct.name}
-              onChangeText={(text) => setNewProduct({ ...newProduct, name: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Price"
-              value={newProduct.price}
-              keyboardType="numeric"
-              onChangeText={(text) => setNewProduct({ ...newProduct, price: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Category"
-              value={newProduct.category}
-              onChangeText={(text) => setNewProduct({ ...newProduct, category: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Description"
-              value={newProduct.description}
-              onChangeText={(text) => setNewProduct({ ...newProduct, description: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Stock"
-              value={newProduct.stock}
-              keyboardType="numeric"
-              onChangeText={(text) => setNewProduct({ ...newProduct, stock: text })}
-            />
+            <Text style={styles.modalTitle}>Add New Shop</Text>
 
-            <TouchableOpacity style={styles.Buttontoadd} onPress={handleAddProduct}>
-              <Text style={styles.buttonText}>Add Product</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Shop Name"
+              value={newShop.name}
+              onChangeText={(text) => setNewShop({ ...newShop, name: text })}
+            />
+            
+            <TouchableOpacity style={styles.Buttontoadd} onPress={handleAddShop}>
+              <Text style={styles.buttonText}>Add Shop</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
@@ -185,7 +150,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#004725',
-    textAlign: 'left',
   },
   addButton: {
     position: 'absolute',
@@ -234,6 +198,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
+  
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -259,7 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   Buttontoadd: {
-    backgroundColor: '#004725',
+    backgroundColor: '#004725',  
     borderRadius: 5,
     paddingVertical: 12,
     marginVertical: 10,
@@ -267,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: '#f44336',  
     borderRadius: 5,
     paddingVertical: 12,
     marginVertical: 10,
@@ -278,7 +243,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
 });
 
-export default ProductAdmin;
+export default ShopAdmin;
