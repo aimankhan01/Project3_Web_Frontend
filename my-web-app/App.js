@@ -14,6 +14,7 @@ import CategoryOpen from './src/pages/CategoryOpen';
 import OrderDetails from './src/pages/OrderDetails';
 import AdminPage from './src/pages/AdminPage';
 import UserAdmin from './src/pages/UserAdmin';
+import ProductsAdmin from './src/pages/ProductsAdmin';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
 import ProfilePage from './src/pages/ProfilePage';
 
@@ -90,6 +91,11 @@ export default function App() {
         <Stack.Screen
           name="UserAdmin"
           component={UserAdmin}
+          options={{ headerShown: false }} 
+        />
+         <Stack.Screen
+          name="ProductsAdmin"
+          component={ProductsAdmin}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
