@@ -20,6 +20,7 @@ import ProductsAdmin from './src/pages/ProductsAdmin';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
 import ProfilePage from './src/pages/ProfilePage';
 import ShopAdmin from './src/pages/ShopAdmin';
+import OrdersAdmin from './src/pages/OrdersAdmin';
 
 
 
@@ -34,7 +35,7 @@ export default function App() {
     <NavigationContainer>
 
 
-      <Stack.Navigator initialRouteName="LandingPage">
+      <Stack.Navigator initialRouteName="AdminPage">
 
 
       <Stack.Screen
@@ -126,6 +127,11 @@ export default function App() {
         <Stack.Screen
           name="ShopAdmin"
           component={ShopAdmin}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="OrdersAdmin"
+          component={OrdersAdmin}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>

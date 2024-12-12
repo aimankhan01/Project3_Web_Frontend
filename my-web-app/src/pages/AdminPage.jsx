@@ -40,7 +40,9 @@ export default function AdminPage() {
         </TouchableOpacity>
 
         {/* Orders Management */}
-        <TouchableOpacity style={[styles.box, { backgroundColor: '#3a7f5a' }]}>
+        <TouchableOpacity style={[styles.box, { backgroundColor: '#3a7f5a' }]}
+        onPress={() => navigation.navigate('OrdersAdmin')}
+        >
           <Icon name="cart-outline" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Orders</Text>
         </TouchableOpacity>
