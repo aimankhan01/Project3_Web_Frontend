@@ -35,17 +35,32 @@ const ProfilePage = ({ navigation }) => {
                     email: userObject.email || "User Email",
                     password: userObject.password || "", 
                 });
-                axios
-                    .get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${user.id}`)
-                    .then((response) => {
-                        setOrders(response.data);
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching orders:", error);
-                    });
-            } else {
-                navigation.navigate("LogIn");
-            }
+
+                // Fetch user orders
+                try {
+                  // Fetch orders from AsyncStorage
+                  const storedOrders = await AsyncStorage.getItem('orders');
+                  const localOrders = storedOrders ? JSON.parse(storedOrders) : [];
+                  setOrders(localOrders); // Update the orders state with local data
+              } catch (error) {
+                  console.error('Error fetching local orders:', error);
+              }
+          } else {
+              navigation.navigate("LogIn");
+          }
+          
+//                 axios
+//                     .get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${user.id}`)
+//                     .then((response) => {
+//                         setOrders(response.data);
+//                     })
+//                     .catch((error) => {
+//                         console.error("Error fetching orders:", error);
+//                     });
+//             } else {
+//                 navigation.navigate("LogIn");
+//             }
+
         };
         fetchUserData();
     }, [navigation]);
@@ -270,45 +285,49 @@ const ProfilePage = ({ navigation }) => {
 
                 {/* Orders Section */}
                 <Box sx={{ padding: "24px" }}>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            fontWeight: "600",
-                            marginBottom: "16px",
-                            borderBottom: "1px solid #ddd",
-                            paddingBottom: "8px",
-                        }}
-                    >
-                        My Orders
-                    </Typography>
-                    {orders.length > 0 ? (
-                        orders.map((order) => (
-                            <Box
-                                key={order.id}
-                                sx={{
-                                    border: "1px solid #ddd",
-                                    borderRadius: "8px",
-                                    padding: "12px",
-                                    marginBottom: "12px",
-                                }}
-                            >
-                                <Typography variant="body2" sx={{ fontWeight: "600" }}>
-                                    Order ID: {order.id}
-                                </Typography>
-                                <Typography variant="body2">
-                                    Date: {order.date}
-                                </Typography>
-                                <Typography variant="body2">
-                                    Total: ${order.total}
-                                </Typography>
-                            </Box>
-                        ))
-                    ) : (
-                        <Typography variant="body2" sx={{ color: "#888" }}>
-                            No orders found.
-                        </Typography>
-                    )}
-                </Box>
+    <Typography
+        variant="h6"
+        sx={{
+            fontWeight: "600",
+            marginBottom: "16px",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "8px",
+        }}
+    >
+        My Orders
+    </Typography>
+    {orders.length > 0 ? (
+        orders.map((order) => (
+            <Box
+                key={order.id}
+                sx={{
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    marginBottom: "12px",
+                }}
+            >
+                <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                    Order ID: {order.id}
+                </Typography>
+                <Typography variant="body2">Date: {order.date}</Typography>
+                <Typography variant="body2">Total: ${order.total.toFixed(2)}</Typography>
+                <Typography variant="body2">Items:</Typography>
+                <ul>
+                    {order.items.map((item, index) => (
+                        <li key={index}>
+                            {item.name} - Quantity: {item.quantity}, Price: ${item.price.toFixed(2)}
+                        </li>
+                    ))}
+                </ul>
+            </Box>
+        ))
+    ) : (
+        <Typography variant="body2" sx={{ color: "#888" }}>
+            No orders found.
+        </Typography>
+    )}
+</Box>
 
                 <Divider />
 

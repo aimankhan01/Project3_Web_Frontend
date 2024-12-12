@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-const CategoryPage = ({ route, navigation, cart, setCart }) => {
-  const { categoryName } = route.params; // Receive the category name
+const StorePage = ({ route, navigation, cart, setCart }) => {
+  const { storeName } = route.params; // Receive the category name
   const [items, setItems] = useState([]); // Category-specific items
   const [loading, setLoading] = useState(true); // Loading state
 
   // Fetch category-specific items
   useEffect(() => {
-    const fetchItemsForCategory = async () => {
+    const fetchItemsForStore = async () => {
       try {
+        console.log(`Fetching items for store: ${storeName}`); // Log the storeName
         const response = await fetch(
-          `https://group17-a58cc073b33a.herokuapp.com/products/search/category?category=${categoryName}`
+          `https://group17-a58cc073b33a.herokuapp.com/products/search/shop?name=${storeName}`
         );
+  
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
+  
         const data = await response.json();
-        setItems(data);
+        console.log('Fetched items:', data); // Log the fetched data
+        setItems(data); // Set the items
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchItemsForCategory();
-  }, [categoryName]);
+  
+    fetchItemsForStore();
+  }, [storeName]);
 
   // Add an individual item to the cart
   const addItemToCart = (item) => {
@@ -58,6 +62,7 @@ const CategoryPage = ({ route, navigation, cart, setCart }) => {
   }
 
   return (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.backButton}
@@ -65,7 +70,7 @@ const CategoryPage = ({ route, navigation, cart, setCart }) => {
       >
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>{categoryName} Items</Text>
+      <Text style={styles.title}>{storeName} Items</Text>
       <FlatList
         data={items}
         keyExtractor={(item) => item.productID.toString()}
@@ -94,11 +99,16 @@ const CategoryPage = ({ route, navigation, cart, setCart }) => {
           View Cart ({cart.reduce((total, item) => total + item.quantity, 0)})
         </Text>
       </TouchableOpacity>
-    </View>
+      
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    padding: 16,
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -166,11 +176,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#388E3C',
     borderRadius: 5,
     alignItems: 'center',
-    position: 'absolute', // Make it float
-    bottom: 16,           // Position from the bottom
-    left: 16,             // Align with screen edges
+    marginTop: 16,
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
     right: 16,
-    zIndex: 1,            // Ensure it stays above other elements
   },
   viewCartButtonText: {
     color: '#fff',
@@ -192,4 +202,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryPage;
+export default StorePage;
