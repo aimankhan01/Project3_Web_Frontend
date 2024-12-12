@@ -28,7 +28,7 @@ export default function App() {
     <UserProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="AdminPage">
+      <Stack.Navigator initialRouteName="LandingPage">
 
       <Stack.Screen
           name="LandingPage"

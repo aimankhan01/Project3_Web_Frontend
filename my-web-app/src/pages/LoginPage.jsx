@@ -1,40 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { Snackbar, Alert } from '@mui/material'; // Import Snackbar and Alert from Material-UI
 import { useUser } from '../../UserContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const { setUser } = useUser(); 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success' or 'error'
+
+  const { setUser } = useUser();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const checkIfLoggedIn = async () => {
-      const storedUser = await AsyncStorage.getItem('user');
-      if (storedUser) {
-        const userObject = JSON.parse(storedUser);
-        setUser(userObject);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Homepage' }], // Navigate to the homepage if already logged in
-        });
-      }
-    };
-    
-    checkIfLoggedIn();
-  }, [navigation, setUser]);
+  
 
-  const handleLogin = async (isAdmin = false) => {
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      showSnackbar('Please fill in both email and password.', 'error');
+      return;
+    }
+  
     try {
-      const endpoint = isAdmin
-        ? 'https://group17-a58cc073b33a.herokuapp.com/login/admin'
-        : 'https://group17-a58cc073b33a.herokuapp.com/login';
-        
-      const response = await fetch(endpoint, {
+      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -42,42 +40,41 @@ export default function LoginPage() {
   
       if (response.ok) {
         const userObject = await response.json();
-        await AsyncStorage.setItem('user', JSON.stringify(userObject)); // Store in AsyncStorage
-        console.log('Stored user:', userObject);
   
-        if (isAdmin) {
-          Alert.alert('Admin Login Successful', `Welcome Admin, ${userObject.name}!`);
-          setUser(userObject);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'AdminPage' }], // Navigate to the AdminPage after successful admin login
-          });
-        } else {
-          Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
-          setUser(userObject);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'ProfilePage' }], // Navigate to ProfilePage for regular users
-          });
-        }
+        // Ensure the user object contains id and is stored correctly
+        await AsyncStorage.removeItem('user');
+        await AsyncStorage.setItem('user', JSON.stringify(userObject));
+        console.log('Stored user:', userObject);
+
+  
+        setUser(userObject); // Updating context
+  
+        const welcomeMessage = `Welcome back, ${userObject.name}!`;
+        const adminMessage = `Welcome Admin, ${userObject.name}!`;
+  
+        showSnackbar(userObject.role === 'true' ? adminMessage : welcomeMessage, 'success');
+  
+        navigation.reset({
+          index: 0,
+          routes: [{ name: userObject.role === 'true' ? 'AdminPage' : 'Homepage' }],
+        });
       } else {
         const errorMessage = await response.text();
-        Alert.alert('Login Failed', errorMessage);
+        showSnackbar(errorMessage || 'Login failed. Please check your credentials.', 'error');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      Alert.alert('Error', `Something went wrong. Please try again. ${error.message}`);
+      showSnackbar('Something went wrong during login. Please try again.', 'error');
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
     <ImageBackground source={require('../assets/leaf.jpg')} style={styles.container} resizeMode="cover">
       <View style={styles.glassEffect}>
-        {/* Home Icon */}
-        <TouchableOpacity style={styles.homeIconContainer} onPress={() => navigation.navigate('Homepage')}>
-          <Icon name="home" size={24} color="white" />
-        </TouchableOpacity>
-
         {/* Logo Image */}
         <Image source={require('../assets/logo.png')} style={styles.logoImage} />
 
@@ -107,17 +104,9 @@ export default function LoginPage() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        <TouchableOpacity style={styles.logInButton} onPress={handleLogin}>
+          <Text style={styles.signInText}>LOG IN</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.logInButton} onPress={() => handleLogin(false)}>
-  <Text style={styles.signInText}>LOG IN</Text>
-</TouchableOpacity>
-
-<TouchableOpacity style={styles.adminButton} onPress={() => handleLogin(true)}>
-  <Text style={styles.signInText}>ADMIN LOGIN</Text>
-</TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.registerText}>
@@ -125,10 +114,20 @@ export default function LoginPage() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </ImageBackground>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -225,5 +224,28 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     marginVertical: 10,
+  },
+
+  snackbar: {
+    position: 'absolute',
+    bottom: 10, // Adjusted to be near the bottom
+    left: 10, // Leftmost corner alignment
+    width: 'auto',
+    maxWidth: '80%',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    elevation: 5, // Shadow for depth
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    justifyContent: 'flex-start',
+  },
+  successSnackbar: {
+    backgroundColor: '#4caf50', // Green for success
+  },
+  errorSnackbar: {
+    backgroundColor: '#f44336', // Red for errors
   },
 });
