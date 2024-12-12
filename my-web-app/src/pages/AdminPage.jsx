@@ -33,7 +33,9 @@ export default function AdminPage() {
         </TouchableOpacity>
 
         {/* Products Management */}
-        <TouchableOpacity style={[styles.box, { backgroundColor: '#004725' }]}>
+        <TouchableOpacity style={[styles.box, { backgroundColor: '#004725' }]}
+                  onPress={() => navigation.navigate('ProductsAdmin')} 
+>
           <Icon name="package-variant" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Products</Text>
         </TouchableOpacity>
