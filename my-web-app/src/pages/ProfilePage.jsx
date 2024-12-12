@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Image, TouchableOpacity } from 'react-native'; // Import TouchableOpacity for navigation
-import { Box, Typography, IconButton, Divider, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Typography, IconButton, Divider, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 
 const ProfilePage = ({ navigation }) => {
-    const [user, setUser] = useState({ name: "", email: "", password: "" });
+    const [user, setUser] = useState({ id:"", name: "", email: "", password: "" });
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editValues, setEditValues] = useState({
         name: "",
@@ -18,16 +18,24 @@ const ProfilePage = ({ navigation }) => {
     const [orders, setOrders] = useState([]);
     const [passwordVisible, setPasswordVisible] = useState(false);
 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
     useEffect(() => {
         const fetchUserData = async () => {
             const storedUser = await AsyncStorage.getItem('user');
-            if (storedUser) {
+            console.log("Stored User from AsyncStorage:", storedUser);
+                        if (storedUser) {
                 const userObject = JSON.parse(storedUser);
+                console.log("User ID:", userObject.userID); 
                 setUser({
+                    id: userObject.userID || "id",
                     name: userObject.name || "User Name",
                     email: userObject.email || "User Email",
-                    password: userObject.password || "", // Store the actual password temporarily
+                    password: userObject.password || "", 
                 });
+
                 // Fetch user orders
                 try {
                   // Fetch orders from AsyncStorage
@@ -40,13 +48,73 @@ const ProfilePage = ({ navigation }) => {
           } else {
               navigation.navigate("LogIn");
           }
+          
+//                 axios
+//                     .get(`https://group17-a58cc073b33a.herokuapp.com/orders?userID=${user.id}`)
+//                     .then((response) => {
+//                         setOrders(response.data);
+//                     })
+//                     .catch((error) => {
+//                         console.error("Error fetching orders:", error);
+//                     });
+//             } else {
+//                 navigation.navigate("LogIn");
+//             }
+
         };
         fetchUserData();
     }, [navigation]);
 
+    const handleSave = () => {
+        if (!user.id) {
+            console.error("User ID is undefined!");
+            setSnackbarMessage("User ID is missing.");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            return;
+        }
+    
+        const updatedUser = {
+            id: editValues.id,
+            name: editValues.name,
+            email: editValues.email,
+            password: editValues.password || "******", // Mask password if not provided
+        };
+    
+        console.log("User ID:", user.id); // Check if user ID is available
+    
+        axios
+            .put(`https://group17-a58cc073b33a.herokuapp.com/users/update?userID=${user.id}`, updatedUser)
+            .then((response) => {
+                setUser({ ...user, ...updatedUser });
+                AsyncStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
+                setSnackbarMessage("Profile updated successfully.");
+                setSnackbarSeverity("success");
+                setSnackbarOpen(true);
+                setEditDialogOpen(false);
+            })
+            .catch((error) => {
+                console.error("Error updating user", error);
+                setSnackbarMessage("Error updating profile.");
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
+            });
+    };
+
     const handleLogout = () => {
-        AsyncStorage.removeItem("user");
-        navigation.navigate("LogIn");
+        AsyncStorage.removeItem("user")
+            .then(() => {
+                setSnackbarMessage("Logged out successfully.");
+                setSnackbarSeverity("success");
+                setSnackbarOpen(true);
+                navigation.navigate("LogIn");
+            })
+            .catch((error) => {
+                console.error("Error logging out:", error);
+                setSnackbarMessage("Error logging out.");
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
+            });
     };
 
     const handleEdit = () => {
@@ -65,26 +133,7 @@ const ProfilePage = ({ navigation }) => {
         fetchStoredUser();
     };
 
-    const handleSave = () => {
-        const updatedUser = {
-            name: editValues.name,
-            email: editValues.email,
-            password: editValues.password || "******", // Mask password if not provided
-        };
-
-        axios
-            .put(`https://group17-a58cc073b33a.herokuapp.com/users/update?userID=${user.id}`, updatedUser)
-            .then((response) => {
-                console.log("User updated successfully", response.data);
-                setUser({ ...user, ...updatedUser });
-                AsyncStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser })); // Save updated details locally
-                setEditDialogOpen(false);
-            })
-            .catch((error) => {
-                console.error("Error updating user", error);
-            });
-    };
-
+    
     const handleCancel = () => {
         setEditDialogOpen(false);
     };
@@ -93,9 +142,12 @@ const ProfilePage = ({ navigation }) => {
         setPasswordVisible((prev) => !prev);
     };
 
-    // Helper function to display password as asterisks
     const displayPassword = (password) => {
         return "*".repeat(password.length);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -345,7 +397,20 @@ const ProfilePage = ({ navigation }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            {/* Snackbar Component */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        
         </Box>
+        
     );
 };
 
