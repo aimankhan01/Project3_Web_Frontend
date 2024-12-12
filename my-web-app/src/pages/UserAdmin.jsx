@@ -18,7 +18,7 @@ import {
   Button,
 } from '@mui/material';
 
-const UserAdmin = () => {
+const UserAdmin = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -85,7 +85,12 @@ const UserAdmin = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>User Management</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color="#004725" />
+        </TouchableOpacity>
+        <Text style={styles.header}>User Management</Text>
+      </View>
 
       <View style={styles.tableRowHeader}>
         <Text style={styles.tableHeaderCell}>User ID</Text>
@@ -118,47 +123,47 @@ const UserAdmin = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onClose={handleEditCancel}>
-  <DialogTitle>Edit User</DialogTitle>
-  <DialogContent>
-    <TextField
-      label="Name"
-      value={editValues.name}
-      onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      label="Email"
-      value={editValues.email}
-      onChange={(e) => setEditValues({ ...editValues, email: e.target.value })}
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      select
-      label="Role"
-      value={editValues.role}
-      onChange={(e) => setEditValues({ ...editValues, role: e.target.value })}
-      fullWidth
-      margin="normal"
-      SelectProps={{
-        native: true,
-      }}
-    >
-      <option value="">Select Role</option>
-      <option value="true">Admin</option>
-      <option value="false">User</option>
-    </TextField>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleEditCancel} color="secondary">
-      Cancel
-    </Button>
-    <Button onClick={handleEditSave} color="primary">
-      Save
-    </Button>
-  </DialogActions>
-</Dialog>
+        <DialogTitle>Edit User</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            value={editValues.name}
+            onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Email"
+            value={editValues.email}
+            onChange={(e) => setEditValues({ ...editValues, email: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            select
+            label="Role"
+            value={editValues.role}
+            onChange={(e) => setEditValues({ ...editValues, role: e.target.value })}
+            fullWidth
+            margin="normal"
+            SelectProps={{
+              native: true,
+            }}
+          >
+            <option value="">Select Role</option>
+            <option value="true">Admin</option>
+            <option value="false">User</option>
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditCancel} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleEditSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </View>
   );
 };
@@ -169,12 +174,16 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginLeft: 10,
     color: '#004725',
-    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,

@@ -34,14 +34,16 @@ export default function AdminPage() {
 
         {/* Products Management */}
         <TouchableOpacity style={[styles.box, { backgroundColor: '#004725' }]}
-                  onPress={() => navigation.navigate('ProductsAdmin')} 
->
+        onPress={() => navigation.navigate('ProductsAdmin')} 
+        >
           <Icon name="package-variant" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Products</Text>
         </TouchableOpacity>
 
         {/* Shops Management */}
-        <TouchableOpacity style={[styles.box, { backgroundColor: '#3a7f5a' }]}>
+        <TouchableOpacity style={[styles.box, { backgroundColor: '#3a7f5a' }]}
+         onPress={() => navigation.navigate('ShopAdmin')} 
+        >
           <Icon name="storefront-outline" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Shops</Text>
         </TouchableOpacity>

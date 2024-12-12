@@ -17,6 +17,7 @@ import UserAdmin from './src/pages/UserAdmin';
 import ProductsAdmin from './src/pages/ProductsAdmin';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
 import ProfilePage from './src/pages/ProfilePage';
+import ShopAdmin from './src/pages/ShopAdmin';
 
 
 
@@ -24,13 +25,10 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <UserProvider>
     <NavigationContainer>
 
-
-     
-
-
-      <Stack.Navigator initialRouteName="Homepage">
+      <Stack.Navigator initialRouteName="AdminPage">
 
       <Stack.Screen
           name="LandingPage"
@@ -98,8 +96,14 @@ export default function App() {
           component={ProductsAdmin}
           options={{ headerShown: false }} 
         />
+        <Stack.Screen
+          name="ShopAdmin"
+          component={ShopAdmin}
+          options={{ headerShown: false }} 
+        />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
+    </UserProvider>
   );
 }
