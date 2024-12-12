@@ -2,12 +2,25 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
-const { width } = Dimensions.get('window'); // Get screen width
+const { width } = Dimensions.get('window');
 
 export default function AdminPage() {
-  const navigation = useNavigation(); // For navigation between screens
+  const navigation = useNavigation(); 
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('user'); 
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LogIn' }], // Redirect to the login page
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      Alert.alert('Error', 'Something went wrong during logout. Please try again.');
+    }
+  };
   return (
     <View style={styles.container}>
       {/* App Logo */}
@@ -34,7 +47,7 @@ export default function AdminPage() {
 
         {/* Products Management */}
         <TouchableOpacity style={[styles.box, { backgroundColor: '#004725' }]}
-        onPress={() => navigation.navigate('ProductsAdmin')} 
+          onPress={() => navigation.navigate('ProductsAdmin')} 
         >
           <Icon name="package-variant" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Products</Text>
@@ -42,12 +55,17 @@ export default function AdminPage() {
 
         {/* Shops Management */}
         <TouchableOpacity style={[styles.box, { backgroundColor: '#3a7f5a' }]}
-         onPress={() => navigation.navigate('ShopAdmin')} 
+          onPress={() => navigation.navigate('ShopAdmin')} 
         >
           <Icon name="storefront-outline" size={40} color="#fff" />
           <Text style={styles.boxTitle}>Shops</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Logout Button */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -72,6 +90,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginRight:"50px",
+    marginLeft:"50px"
   },
   box: {
     width: width * 0.18,
@@ -87,5 +107,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
+  },
+  logoutButton: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+    backgroundColor: '#004725',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
