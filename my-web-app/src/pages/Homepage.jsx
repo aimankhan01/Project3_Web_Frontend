@@ -37,7 +37,7 @@ const Homepage = ({ navigation }) => {
 
   const handleStorePress = (store) => {
     console.log(`Clicked on ${store.name}`);
-    navigation.navigate('Search', { searchQuery: store.name });
+    navigation.navigate('Stores', { storeName: store.name });
   };
 
   const goToCart = () => {

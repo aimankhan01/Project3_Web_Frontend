@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,6 +10,8 @@ import SearchPage from './src/pages/Searchpage';
 import Cart from './src/pages/ShoppingCart'; 
 import LandingPage from './src/pages/LandingPage';
 import CategoryOpen from './src/pages/CategoryOpen';
+import Stores from './src/pages/stores';
+import Checkout from './src/pages/Checkout';
 
 import OrderDetails from './src/pages/OrderDetails';
 import AdminPage from './src/pages/AdminPage';
@@ -24,11 +26,16 @@ import ShopAdmin from './src/pages/ShopAdmin';
 const Stack = createStackNavigator();
 
 export default function App() {
+
+  const [cart, setCart] = useState([]);
+
   return (
     <UserProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="AdminPage">
+      {/* <Stack.Navigator initialRouteName="AdminPage"> */}
+      <Stack.Navigator initialRouteName="HomePage">
+
 
       <Stack.Screen
           name="LandingPage"
@@ -67,19 +74,39 @@ export default function App() {
         />
         <Stack.Screen
           name="Categories"
-          component={Categories}
-          options={{ headerShown: false }} 
-        />
+          options={{ headerShown: false }}
+        >
+          {(props) => {
+            console.log('Passing cart to Categories component:', cart);
+            return <Categories {...props} cart={cart} setCart={setCart} />;
+          }}
+        </Stack.Screen>
         <Stack.Screen
           name="Cart"
-          component={Cart}
-          options={{ headerShown: false }} 
-        />
+          options={{ headerShown: false }}
+        >
+          {(props) => {
+            console.log('Passing cart to Cart component:', cart);
+            return <Cart {...props} cart={cart} />;
+          }}
+        </Stack.Screen>
         <Stack.Screen
           name="CategoryOpen"
           component={CategoryOpen}
           options={{ headerShown: false }} 
         />
+        <Stack.Screen
+          name="Stores"
+          
+          options={{ headerShown: false }} 
+        >
+          {(props) => {
+            console.log('Passing cart to stores component:', cart);
+            return <Stores {...props} cart={cart} setCart={setCart} />;
+          }}
+        </Stack.Screen>
+        
+        <Stack.Screen name="Checkout" component={Checkout} />
 
         <Stack.Screen
           name="OrderDetails"
