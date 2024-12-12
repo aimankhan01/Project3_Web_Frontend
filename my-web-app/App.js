@@ -9,13 +9,13 @@ import Categories from './src/pages/Categories';
 import SearchPage from './src/pages/Searchpage'; 
 import Cart from './src/pages/ShoppingCart'; 
 import LandingPage from './src/pages/LandingPage';
-import ProfilePage from './src/pages/ProfilePage';
 import CategoryOpen from './src/pages/CategoryOpen';
+
 import OrderDetails from './src/pages/OrderDetails';
 import AdminPage from './src/pages/AdminPage';
 import UserAdmin from './src/pages/UserAdmin';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
-
+import ProfilePage from './src/pages/ProfilePage';
 
 
 
@@ -23,10 +23,13 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <UserProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="AdminPage">
+
+     
+
+
+      <Stack.Navigator initialRouteName="Homepage">
 
       <Stack.Screen
           name="LandingPage"
@@ -78,6 +81,7 @@ export default function App() {
           component={CategoryOpen}
           options={{ headerShown: false }} 
         />
+
         <Stack.Screen
           name="OrderDetails"
           component={OrderDetails}
@@ -91,6 +95,5 @@ export default function App() {
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
-    </UserProvider>
   );
 }
