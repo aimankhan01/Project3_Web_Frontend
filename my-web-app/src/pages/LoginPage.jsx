@@ -28,10 +28,13 @@ export default function LoginPage() {
     checkIfLoggedIn();
   }, [navigation, setUser]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (isAdmin = false) => {
     try {
-      const response = await fetch('https://group17-a58cc073b33a.herokuapp.com/login', {
+      const endpoint = isAdmin
+        ? 'https://group17-a58cc073b33a.herokuapp.com/login/admin'
+        : 'https://group17-a58cc073b33a.herokuapp.com/login';
         
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -39,14 +42,24 @@ export default function LoginPage() {
   
       if (response.ok) {
         const userObject = await response.json();
-        await AsyncStorage.setItem('user', JSON.stringify(userObject));  // Store in AsyncStorage
+        await AsyncStorage.setItem('user', JSON.stringify(userObject)); // Store in AsyncStorage
         console.log('Stored user:', userObject);
-        Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
-        setUser(userObject);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'ProfilePage' }], // Navigate to ProfilePage after successful login
-        });
+  
+        if (isAdmin) {
+          Alert.alert('Admin Login Successful', `Welcome Admin, ${userObject.name}!`);
+          setUser(userObject);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'AdminPage' }], // Navigate to the AdminPage after successful admin login
+          });
+        } else {
+          Alert.alert('Login Successful', `Welcome back, ${userObject.name}!`);
+          setUser(userObject);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'ProfilePage' }], // Navigate to ProfilePage for regular users
+          });
+        }
       } else {
         const errorMessage = await response.text();
         Alert.alert('Login Failed', errorMessage);
@@ -98,9 +111,13 @@ export default function LoginPage() {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logInButton} onPress={handleLogin}>
-          <Text style={styles.signInText}>LOG IN</Text>
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.logInButton} onPress={() => handleLogin(false)}>
+  <Text style={styles.signInText}>LOG IN</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.adminButton} onPress={() => handleLogin(true)}>
+  <Text style={styles.signInText}>ADMIN LOGIN</Text>
+</TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.registerText}>
@@ -200,5 +217,13 @@ const styles = StyleSheet.create({
   eyeIcon: {
     marginLeft: -40,
     padding: 10,
+  },
+  adminButton: {
+    width: '50%',
+    backgroundColor: '#d9534f', // Different color to differentiate admin login
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginVertical: 10,
   },
 });

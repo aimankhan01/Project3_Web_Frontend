@@ -12,6 +12,8 @@ import LandingPage from './src/pages/LandingPage';
 import ProfilePage from './src/pages/ProfilePage';
 import CategoryOpen from './src/pages/CategoryOpen';
 import OrderDetails from './src/pages/OrderDetails';
+import AdminPage from './src/pages/AdminPage';
+import UserAdmin from './src/pages/UserAdmin';
 import { UserProvider } from './UserContext'; // Adjust the path as needed
 
 
@@ -24,7 +26,7 @@ export default function App() {
     <UserProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="LogIn">
+      <Stack.Navigator initialRouteName="AdminPage">
 
       <Stack.Screen
           name="LandingPage"
@@ -44,6 +46,11 @@ export default function App() {
         <Stack.Screen
           name="Homepage"
           component={Homepage}
+          options={{ headerShown: false }} 
+        />
+         <Stack.Screen
+          name="AdminPage"
+          component={AdminPage}
           options={{ headerShown: false }} 
         />
          <Stack.Screen
@@ -74,6 +81,11 @@ export default function App() {
         <Stack.Screen
           name="OrderDetails"
           component={OrderDetails}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="UserAdmin"
+          component={UserAdmin}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
