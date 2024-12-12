@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native'; // Import TouchableOpacity for navigation
 import { Box, Typography, IconButton, Divider, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -116,17 +116,19 @@ const ProfilePage = ({ navigation }) => {
                     marginBottom: "20px",
                     justifyContent: "flex-start",
                     alignItems: "center",
-                    backgroundColor: "#004725", // Header background color
+                    background: "linear-gradient(135deg, #3a7f5a 0%, #004725 100%)", // Header background color
                     height: "64px", // Fixed height for the header
                     padding: "0 16px", // Horizontal padding for spacing
                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle shadow below header
                 }}
             >
-                <Image
-    source={require('../assets/logo.png')} // Correct way to use images in React Native
-     alt="App Logo"
-    style={{ height: '100px', width: '100px', marginTop: '10px' , marginLeft: '-10px'}}
-/>
+                <TouchableOpacity onPress={() => navigation.navigate("Homepage")}> {/* Add navigation here */}
+                    <Image
+                        source={require('../assets/logo.png')} // Correct way to use images in React Native
+                        alt="App Logo"
+                        style={{ height: '100px', width: '100px', marginTop: '10px', marginLeft: '-10px'}}
+                    />
+                </TouchableOpacity>
             </Box>
 
             {/* Main Profile Content */}
@@ -278,9 +280,9 @@ const ProfilePage = ({ navigation }) => {
                     <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: "#3a7f5a", // Custom green color
+                            backgroundColor: "#004725", // Custom green color
                             '&:hover': {
-                                backgroundColor: "#31724c", // Slightly darker shade on hover
+                                backgroundColor: "#3a7f5a", // Slightly darker shade on hover
                             },
                         }}
                         onClick={handleLogout}
